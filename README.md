@@ -6,7 +6,7 @@ Texto.
 
 ## Idea:
 
-Juego de cartas de la baraja española de La Escoba. Hacer una IA con (Monte Carlo search tree/Utility AI/minimax) y que jueguen entre ellas. Alomejor una se puede sustituir por jugador.
+Juego de cartas de la baraja española de La Escoba. Hacer una IA con (Monte Carlo search tree/Utility AI/minimax) y que jueguen entre ellas. Alomejor una se puede sustituir por jugador. Alomejor usar UAI para elegir que carta poner cuando se pueden sumar 15 y el MCTS para cuando no se pueden sumar cartas y poder dejar la carta que menos ayude al contrario al dejarla en el tablero???
 
 ## Planteamiento del problema:
 
@@ -51,4 +51,10 @@ Texto.
 
 ## Referencias:
 
-Texto.
+[Monte Carlo Tree Search](https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/)
+
+[MCTS](https://medium.com/@mattgmez98/using-the-monte-carlo-tree-search-algorithm-for-a-card-game-ai-simulation-40a0218494e4)
+
+[Utility AI1](https://medium.com/@morganwalkupdev/ai-made-easy-with-utility-ai-fef94cd36161)
+
+[Utility AI2](https://shaggydev.com/2023/04/19/utility-ai)
