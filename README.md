@@ -16,15 +16,24 @@ Texto.
 
 Texto.
 
-## Clases extras:
+## Clases extras y demás cosas:
 
-Texto.
+Clase carta, alomejor struct. Con valor y palo.
+Mazo.
+Mano.
+Tablero.
+GameManager obv.
+MCTS.
+Utility AI.
+Rondas y partidas.
+Level Manager y UI manager.
+
 
 ## Implementación:
 
 | Estado  |  Tarea  |  Fecha  |  Entrega  |  
 |:--|:--|:-:|:-:|
-| In progress | Diseño e idea | 8-4-2025 | 8-5-2025 |
+| In progress | Diseño e idea | xx-xx-2025 | 8-5-2025 |
 | Undone | tarea0: | xx-xx-2025 | xx-xx-2025 |
 | Undone | tarea1: | xx-xx-2025 | xx-xx-2025 |
 | Undone | tarea2: | xx-xx-2025 | xx-xx-2025 |
