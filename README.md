@@ -56,7 +56,9 @@ Texto.
 
 ## Notas:
 
-Texto.
+A - base; creada por nosotros, cogida de las practicas o externo
+B y C - cosas de as prácticas pero no obligatorio.
+D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
 
 ## Referencias:
 
