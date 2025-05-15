@@ -8,7 +8,7 @@ Proyecto final de la asignatura de Inteligencia Artificial de Videojuegos del Gd
 
 ## Resumen:
 
-Partida de La Escoba entre 2 IAs con modelos diferentes modelos de IA.
+Partida de La Escoba entre 2 IAs con modelos diferentes de IA.
 
 ## Idea:
 
@@ -22,9 +22,11 @@ Juego de cartas de la baraja española de *La Escoba* en Unity. La idea es hacer
 
 **C** - Crear el modelo de IA UtilityAI. El modelo asigna pesos a las cartas o jugadas (escoba, 7 de oros, sietes, oros y cartas) y dadas todas las combinaciones, hace la heuristica y se queda con el mejor resultado.
 
-**D** - Testing de partida. Comporbar que el juego se juega, las rondas y partidas van como deberían y no hay errores.
+**D** - Testing de partida. Comprobar que el juego se juega, las rondas y partidas van como deberían y no hay errores.
 
-**E** - Usuario jugador. Implementar que el jugador pueda tomar el control de una de las IAs (desde el menu entre rondas), tapando las cartas de la otra IA. Tambien se podra devolver el control a la IA.
+**E** - Usuario jugador (opcional pero casi seguro). Implementar que el jugador pueda tomar el control de una de las IAs (desde el menu entre rondas), tapando las cartas de la otra IA. Tambien se podra devolver el control a la IA.
+
+**F** - Sistema de telemetría (opcional muy MUY opcional). Implementar un sistema de telemetría usando los conocimientos dados en UAJ. Quiza no para IAV pero para la futura continiacion de este proyecto porque siempre he querido hacer mi propia Escoba. Que sobre esto tengo una dura, cuando acabe esta asignatura, este proyecto se puede seguir usando???
 
 ## Diseño de la solución:
 
@@ -36,7 +38,7 @@ class MCTSNode(state, parent = none, parent_action = none):
   children: list # Possible actions from this node.
   nVisits: int # Number of visits this node has been visited
   accPoints: int # Number of points accumulated in this node.
-  untriedActions: list = state.getPossibleActions() # Actions that are lef to try.
+  untriedActions: list = state.getPossibleActions() # Remaining actions.
 
     function expands() -> MCTSNode:
       action = untriedActions.pop() # Pick the first action to make.
@@ -59,7 +61,7 @@ class MCTSNode(state, parent = none, parent_action = none):
       nVisits += 1
       accPoints += result
       if parent:
-        parent.backpropagate(accPoints)
+        parent.backpropagate(result)
 
     function isFullyExpanded() -> bool:
       return (untriedActions.size == 0)
@@ -109,14 +111,14 @@ class UtilityAI:
     # parameters to later know witch move is better.
     scopaInMove = 0 # 0 if not, 1 if yes.
     goldenSevenInMove = 0 # 0 if not, 1 if yes.
-    sevensInMove = 0 # 0, 1 or 2 deppens on the move.
-    goldsInMove = 0 # 0, 1, ... deppens on the move.
-    cardsInMove = 0 # 0, 1,... deppends on the move.
+    sevensInMove = 0 # 0, 1 or 2 depens on the move.
+    goldsInMove = 0 # 0, 1, ... depens on the move.
+    cardsInMove = 0 # 0, 1,... depends on the move.
 
     if move.hasScopa():
       scopaInMove = 1
     
-    if move.hasGoldenSeven()
+    if move.hasGoldenSeven():
       goldenSevenInMove = 1
     
     sevensInMove = move.numSevens() / NUM_SEVENS # The division is to reduce the final result and not get a huge number.
@@ -190,17 +192,17 @@ class Deck:
        for j = 1 to 10:
          switch(i):
            case 0:
-             cards[j + i * 10] = new Card('O', j)
+             cards.add(new Card('O', j))
             case 1:
-             cards[j + i * 10] = new Card('E', j)
+             cards.add(new Card('E', j))
             case 2:
-             cards[j + i * 10] = new Card('C', j)
+             cards.add(new Card('C', j))
             case 3:
-             cards[j + i * 10] = new Card('B', j)
+             cards.add(new Card('B', j))
     nCards = 40
 
   # Shuffle the cards randmoly
-  fucntion shuffle(nTimes = 1) -> void:
+  function shuffle(nTimes = 1) -> void:
     # By Fisher-Yates method
     n = cards.size()
     for i = 0 to nTimes:
@@ -260,7 +262,7 @@ class Hand:
 
 ### Pila:
 
-Clase que contiene las cartas que ha ido recogiendo cada jugador en una ronda para luego hacer la cuenta final y contabilizar puntos. Para mayor facilidad llevara tambien la cuenta de escobas.
+Clase que contiene las cartas que ha ido recogiendo cada jugador en una ronda para el recuento final de puntos. Para mayor facilidad llevara tambien la cuenta de escobas.
 
 ### Move:
 
@@ -285,17 +287,18 @@ Manager encargado de gestionar la UI. Inicio del juego, seleccion de partida, pa
 
 ## Implementación:
 
-| Estado | Tarea           |   Fecha    |  Entrega   |
-| :----- | :-------------- | :--------: | :--------: |
-| Done   | Diseño e idea   | 6-05-2025  | 8-05-2025  |
-| Done   | Documentacion   | 14-05-2025 | 14-05-2025 |
-| Undone | A: entorno      | xx-xx-2025 | 27-05-2025 |
-| Undone | B: MCTS         | xx-xx-2025 | 27-05-2025 |
-| Undone | C: UAI          | xx-xx-2025 | 27-05-2025 |
-| Undone | D: testing      | xx-xx-2025 | 27-05-2025 |
-| Undone | E: extra        | xx-xx-2025 | 27-05-2025 |
-| Undone | Pruebas y vídeo | xx-xx-2025 | 27-05-2025 |
-| Undone | Build           | xx-xx-2025 | 27-05-2025 |
+| Estado | Tarea              |   Fecha    |  Entrega   |
+| :----- | :----------------- | :--------: | :--------: |
+| Done   | Diseño e idea      | 6-05-2025  | 8-05-2025  |
+| Done   | Documentacion      | 14-05-2025 | 14-05-2025 |
+| Undone | A: entorno         | xx-xx-2025 | 27-05-2025 |
+| Undone | B: MCTS            | xx-xx-2025 | 27-05-2025 |
+| Undone | C: UAI             | xx-xx-2025 | 27-05-2025 |
+| Undone | D: testing         | xx-xx-2025 | 27-05-2025 |
+| Undone | E: extra           | xx-xx-2025 | 27-05-2025 |
+| Undone | F: extra muy extra | xx-xx-2025 | 27-05-2025 |
+| Undone | Pruebas y vídeo    | xx-xx-2025 | 27-05-2025 |
+| Undone | Build              | xx-xx-2025 | 27-05-2025 |
 
 Texto.
 
@@ -309,7 +312,7 @@ P2: Posibles errores al hacer movimientos del MCTS o viceversa.
 
 P3: Posibles errores al hacer movimientos del Utility AI o viceversa.
 
-P4: *A definir durante el desarrollo.*
+PX: *A definir durante el desarrollo.*
 
 ## Vídeo:
 
