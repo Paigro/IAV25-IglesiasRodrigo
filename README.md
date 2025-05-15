@@ -38,27 +38,15 @@ class MCTSNode(state, parent = none, parent_action = none):
   accPoints: int # Number of points accumulated in this node.
   untriedActions: list = state.getPossibleActions() # Actions that are lef to try.
 
-    function untriedActions() -> list:
-      untriedActions = state.getPossibleActions()
-      return untriedActions
-
-    function getNVisits() -> int:
-      return nVisits
-
     function expands() -> MCTSNode:
       action = untriedActions.pop() # Pick the first action to make.
-      nextState = state.move(action) # Simulates the next state base in the action taken.
-      newChild = MCTSNode(nextState, this, action) # Creates a new child with the new properties.
-      
-      children.add(newChil) # Adds the child to the list of childs.
+      simState = state.move(action) # Simulates the next state base in the action taken.
+      newChild = MCTSNode(simState, this, action) # Creates a new child with the new properties.
+      children.add(newChild) # Adds the child to the list of childs.
       return newChild
-
-    function isEnough() -> bool:
-      return accPoints >= 15
 
     function rollout() -> float:
       simState = state # Copy of the state to simulate.
-
       while not simState.isEnough():
         possibleMoves = simState.getPossibleActions()
         action = rolloutPolicy(possibleMoves)
@@ -71,21 +59,35 @@ class MCTSNode(state, parent = none, parent_action = none):
       nVisits += 1
       accPoints += result
       if parent:
-        parent.backpropagate()
+        parent.backpropagate(accPoints)
 
     function isFullyExpanded() -> bool:
       return (untriedActions.size == 0)
 
-    function select(node) -> MCTSNode:
-      while node.isFullyExpanded() and node.children.count == 0:
+    function select() -> MCTSNode:
+      node = this
+      while !node.isFullyExpanded() and node.children.count > 0:
         node = node.bestChild(c = √2)
 
-    function bestChild(node, c) -> MCTSNode:
-      return argmax_{child in node.children} (hijo.accPoints / hijo.nVisits + C * sqrt(ln(node.nVisits) / hijo.nVisits)
-  )
-      
+    function bestChild(c) -> MCTSNode:
+      return argmax_{child in this.children} ((child.accPoints / child.nVisits) + c * sqrt(ln(this.nVisits) / child.nVisits)) # With UCB1.
+
   
-  
+function isEnough() -> bool:
+  return accPoints >= 15
+
+function MCTS(initState, maxTime) -> Action:
+  initNode = MCTSNode(initState)
+  initTime = getTime()
+  while (getTime() - initTime) < maxTime:
+    node = select()
+    if not node.isFullyExpanded():
+      node = expands()
+    result = rollout()
+    node.backpropagate(result)
+  bestChild = argmax_{h in rootNode.children} h.nVisits
+  return bestChild.parentAction
+
 ```
 
 ```
@@ -114,17 +116,17 @@ UI manager.
 
 ## Implementación:
 
-| Estado  |  Tarea  |  Fecha  |  Entrega  |  
-|:--|:--|:-:|:-:|
-| Done | Diseño e idea | 6-05-2025-2025 | 8-05-2025 |
-| In progress | Documentacion | 14-05-2025-2025 | 14-05-2025 |
-| Undone | A: entorno | xx-xx-2025 | 27-05-2025 |
-| Undone | B: MCTS | xx-xx-2025 | 27-05-2025 |
-| Undone | C: UAI | xx-xx-2025 | 27-05-2025 |
-| Undone | D: testing | xx-xx-2025 | 27-05-2025 |
-| Undone | E: extra | xx-xx-2025 | 27-05-2025 |
-| Undone | Pruebas y video | xx-xx-2025 | 27-05-2025 |
-| Undone | Build | xx-xx-2025 | 27-05-2025 |
+| Estado      | Tarea           |      Fecha      |  Entrega   |
+| :---------- | :-------------- | :-------------: | :--------: |
+| Done        | Diseño e idea   | 6-05-2025-2025  | 8-05-2025  |
+| In progress | Documentacion   | 14-05-2025-2025 | 14-05-2025 |
+| Undone      | A: entorno      |   xx-xx-2025    | 27-05-2025 |
+| Undone      | B: MCTS         |   xx-xx-2025    | 27-05-2025 |
+| Undone      | C: UAI          |   xx-xx-2025    | 27-05-2025 |
+| Undone      | D: testing      |   xx-xx-2025    | 27-05-2025 |
+| Undone      | E: extra        |   xx-xx-2025    | 27-05-2025 |
+| Undone      | Pruebas y video |   xx-xx-2025    | 27-05-2025 |
+| Undone      | Build           |   xx-xx-2025    | 27-05-2025 |
 
 Texto.
 
