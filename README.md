@@ -97,11 +97,87 @@ class UtilityAI:
 
 ## Clases extras:
 
-Carta.
+### Carta:
 
-Mazo. Barajado.
+```
 
-Mano.
+struct Card:
+  suit: char
+  number: int
+
+  Card(s, n):
+    suit = s
+    number = n
+
+```
+
+### Mazo:
+
+```
+
+class Deck:
+  
+  cards: list
+
+  # Constructor.
+  Deck():
+    cards = []
+    createDeck() 
+    shuffle()
+    shuffle() # Two times is better than one.
+
+  # Creates a new deck in order.
+  function createDeck():
+    cards.clear()
+    for i = 0 to 3:
+       for j = 1 to 10:
+         switch(i):
+           case 0:
+             cards[j + i * 10] = new Card('O', j)
+            case 1:
+             cards[j + i * 10] = new Card('E', j)
+            case 2:
+             cards[j + i * 10] = new Card('C', j)
+            case 3:
+             cards[j + i * 10] = new Card('B', j)
+
+  # Shuffle the cards randmoly
+  fucntion shuffle() -> void:
+    # By Fisher-Yates method
+    n = cards.size()
+    for i = n - 1 down to 1:
+      j = randomInt(0, i)
+      temp = cards[i]
+      cards[i] = cards[j]
+      cards[j] = temp
+  
+  # Gives to the player hand 1 card. The management of giving 3 cards each round belogs to other Manager.
+  function giveCardToCard(playerHand) -> void:
+    playerHand.addCard(cards.pop())
+  
+  # Add a card to the table. The management of putting 4 cards on the table belogs to other Manager.
+  function giveCardToTable(table)
+    table.addCard(cards.pop())
+
+  # Resets the deck:
+  function reset() -> void:
+    createDeck()
+    shuffle()
+    shuffle() # Two times is better than one.
+
+    
+
+```
+
+### Mano:
+
+```
+
+struct Hand:
+  suit: char
+  number: int
+
+```
 
 Tablero de juego.
 
@@ -156,9 +232,11 @@ D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
 
 ## Referencias:
 
-[Monte Carlo Tree Search](https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/)
+[MCTS1](https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/)
 
-[MCTS](https://medium.com/@mattgmez98/using-the-monte-carlo-tree-search-algorithm-for-a-card-game-ai-simulation-40a0218494e4)
+[MCTS2](https://medium.com/@mattgmez98/using-the-monte-carlo-tree-search-algorithm-for-a-card-game-ai-simulation-40a0218494e4)
+
+[MCTS3](https://ai-boson.github.io/mcts/)
 
 [Utility AI1](https://medium.com/@morganwalkupdev/ai-made-easy-with-utility-ai-fef94cd36161)
 
