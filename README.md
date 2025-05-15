@@ -18,7 +18,7 @@ Juego de cartas de la baraja española de *La Escoba* en Unity. La idea es hacer
 
 **A** - Creacion del entorno de juego. Creación del tablero, el mazo y manos. El GameManager, UIManager y LevelManager. Los assets serán sacados de Internet si no da tiempo a crearlos.
  
-**B** - Crear el modelo de IA MCTS. Le modelo va recorriendo un arbol de jugadas dadas las posibles cartas que tiene y hay en la mesa para escoger la mejor jugada.
+**B** - Crear el modelo de IA MCTS. El modelo va recorriendo un arbol de jugadas dadas las posibles cartas que tiene y hay en la mesa para escoger la mejor jugada.
 
 **C** - Crear el modelo de IA UtilityAI. El modelo asigna pesos a las cartas o jugadas (escoba, 7 de oros, sietes, oros y cartas) y dadas todas las combinaciones, hace la heuristica y se queda con el mejor resultado.
 
@@ -45,11 +45,11 @@ class MCTSNode(state, parent = none, parent_action = none):
       children.add(newChild) # Adds the child to the list of childs.
       return newChild
 
-    function rollout() -> float:
+    function simulate() -> float:
       simState = state # Copy of the state to simulate.
       while not simState.isEnough():
         possibleMoves = simState.getPossibleActions()
-        action = rolloutPolicy(possibleMoves)
+        action = simulatePolicy(possibleMoves)
         simState = simState.move(action)
       return simState.evaluate()
 
@@ -70,7 +70,7 @@ class MCTSNode(state, parent = none, parent_action = none):
         node = node.bestChild(c = √2)
 
     function bestChild(c) -> MCTSNode:
-      return argmax_{child in this.children} ((child.accPoints / child.nVisits) + c * sqrt(ln(this.nVisits) / child.nVisits)) # With UCB1.
+      return max{child in this.children} ((child.accPoints / child.nVisits) + c * sqrt(ln(this.nVisits) / child.nVisits)) # With UCB1.
 
   
 function isEnough() -> bool:
@@ -83,10 +83,12 @@ function MCTS(initState, maxTime) -> Action:
     node = select()
     if not node.isFullyExpanded():
       node = expands()
-    result = rollout()
+    result = simulate()
     node.backpropagate(result)
-  bestChild = argmax_{h in rootNode.children} h.nVisits
+  bestChild = max{h in rootNode.children} h.nVisits
   return bestChild.parentAction
+
+  ##----Faltaría definir las simulatePolicies pero son casi iguales a las de Utility AI----##
 
 ```
 
@@ -283,17 +285,17 @@ Manager encargado de gestionar la UI. Inicio del juego, seleccion de partida, pa
 
 ## Implementación:
 
-| Estado      | Tarea           |   Fecha    |  Entrega   |
-| :---------- | :-------------- | :--------: | :--------: |
-| Done        | Diseño e idea   | 6-05-2025  | 8-05-2025  |
-| In progress | Documentacion   | 14-05-2025 | 14-05-2025 |
-| Undone      | A: entorno      | xx-xx-2025 | 27-05-2025 |
-| Undone      | B: MCTS         | xx-xx-2025 | 27-05-2025 |
-| Undone      | C: UAI          | xx-xx-2025 | 27-05-2025 |
-| Undone      | D: testing      | xx-xx-2025 | 27-05-2025 |
-| Undone      | E: extra        | xx-xx-2025 | 27-05-2025 |
-| Undone      | Pruebas y video | xx-xx-2025 | 27-05-2025 |
-| Undone      | Build           | xx-xx-2025 | 27-05-2025 |
+| Estado | Tarea           |   Fecha    |  Entrega   |
+| :----- | :-------------- | :--------: | :--------: |
+| Done   | Diseño e idea   | 6-05-2025  | 8-05-2025  |
+| Done   | Documentacion   | 14-05-2025 | 14-05-2025 |
+| Undone | A: entorno      | xx-xx-2025 | 27-05-2025 |
+| Undone | B: MCTS         | xx-xx-2025 | 27-05-2025 |
+| Undone | C: UAI          | xx-xx-2025 | 27-05-2025 |
+| Undone | D: testing      | xx-xx-2025 | 27-05-2025 |
+| Undone | E: extra        | xx-xx-2025 | 27-05-2025 |
+| Undone | Pruebas y vídeo | xx-xx-2025 | 27-05-2025 |
+| Undone | Build           | xx-xx-2025 | 27-05-2025 |
 
 Texto.
 
@@ -303,17 +305,19 @@ Para este proyecto se han realizado las siguientes pruebas:
 
 P1: Dadas unas partidas, que IA ganas más.
 
-P2: Posibles errores al hacer
+P2: Posibles errores al hacer movimientos del MCTS o viceversa.
 
-P3:
+P3: Posibles errores al hacer movimientos del Utility AI o viceversa.
+
+P4: *A definir durante el desarrollo.*
 
 ## Vídeo:
 
-Texto.
+[Aqui va el enlace al video de YouTube](https://github.com/Paigro)
 
 ## Build:
 
-Texto.
+[Aqui va el enlace a la carpeta de Drive](https://github.com/Paigro)
 
 ## Notas:
 
