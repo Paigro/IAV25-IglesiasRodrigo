@@ -1,50 +1,88 @@
 # IAV25-IglesiasRodrigo
 
+## Info:
+
+Proyecto final de la asignatura de Inteligencia Artificial de Videojuegos del GdV UCM.
+
+[Pablo Iglesias Rodrigo](https://github.com/Paigro)
+
 ## Resumen:
 
-Texto.
+Partida de La Escoba entre 2 IAs con modelos diferentes modelos de IA.
 
 ## Idea:
 
-Juego de cartas de la baraja española de La Escoba. Hacer una IA con (Monte Carlo search tree/Utility AI/minimax) y que jueguen entre ellas. Alomejor una se puede sustituir por jugador. Alomejor usar UAI para elegir que carta poner cuando se pueden sumar 15 y el MCTS para cuando no se pueden sumar cartas y poder dejar la carta que menos ayude al contrario al dejarla en el tablero???
+Juego de cartas de la baraja española de La Escoba en Unity. La idea es hacer 2 IAs que jueguen entre ellas con la posibilidad de poder tomar el control de una de ellas por el jugador si asi lo desea. Se implementaran 2 modelos de IA: Monte Carlo Tree Search y Utility AI, y antes de empezar la partida se podrá
+determinar cual de los dos tendrá cada IA. Luego jugarán.
 
 ## Planteamiento del problema:
 
-Texto.
+A - Creacion del entorno de juego. Creación del tablero, el mazo y manos. El GameManager, UIManager y LevelManager. Los assets serán sacados de Internet si no da tiempo a crearlos.
 
-## Diseño de la soluciçon:
+B - Crear el MCTS.
 
-Texto.
+C - Crear el UtilityAI.
 
-## Clases extras y demás cosas:
+D - Testing de partida. Comporbar que el juego se juega, las rondas y partidas van como deberían y no hay errores.
 
-Clase carta, alomejor struct. Con valor y palo.
-Mazo.
+E - Usuario jugador. Implementar que el jugador pueda tomar el control de una de las IAs (desde el menu entre rondas), tapando las cartas de la otra IA. Tambien se podra devolver el control a la IA.
+
+## Diseño de la solución:
+
+```
+class MCTS:
+  
+```
+
+```
+class UtilityAI:
+  
+```
+
+## Clases extras:
+
+Carta.
+
+Mazo. Barajado.
+
 Mano.
-Tablero.
-GameManager obv.
-MCTS.
-Utility AI.
+
+Tablero de juego.
+
+GameManager.
+
 Rondas y partidas.
-Level Manager y UI manager.
+
+Level Manager.
+
+UI manager.
 
 
 ## Implementación:
 
 | Estado  |  Tarea  |  Fecha  |  Entrega  |  
 |:--|:--|:-:|:-:|
-| In progress | Diseño e idea | xx-xx-2025 | 8-5-2025 |
-| Undone | tarea0: | xx-xx-2025 | xx-xx-2025 |
-| Undone | tarea1: | xx-xx-2025 | xx-xx-2025 |
-| Undone | tarea2: | xx-xx-2025 | xx-xx-2025 |
-| Undone | tarea3: | xx-xx-2025 | xx-xx-2025 |
-| Undone | tarea4: | xx-xx-2025 | xx-xx-2025 |
+| Done | Diseño e idea | 6-05-2025-2025 | 8-05-2025 |
+| In progress | Documentacion | 14-05-2025-2025 | 14-05-2025 |
+| Undone | A | xx-xx-2025 | 27-05-2025 |
+| Undone | B | xx-xx-2025 | 27-05-2025 |
+| Undone | C | xx-xx-2025 | 27-05-2025 |
+| Undone | D | xx-xx-2025 | 27-05-2025 |
+| Undone | E | xx-xx-2025 | 27-05-2025 |
+| Undone | Pruebas y video | xx-xx-2025 | 27-05-2025 |
+| Undone | Build | xx-xx-2025 | 27-05-2025 |
 
 Texto.
 
 ## Pruebas y métricas:
 
-Texto.
+Para este proyecto se han realizado las siguientes pruebas:
+
+P1:
+
+P2:
+
+P3:
 
 ## Vídeo:
 
