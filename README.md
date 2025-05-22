@@ -290,7 +290,7 @@ Manager encargado de gestionar la UI. Inicio del juego, seleccion de partida, pa
 | Estado | Tarea              |   Fecha    |  Entrega   |
 | :----- | :----------------- | :--------: | :--------: |
 | Done   | Diseño e idea      | 6-05-2025  | 8-05-2025  |
-| Done   | Documentacion      | 14-05-2025 | 14-05-2025 |
+| Done   | Documentacion      | 14-05-2025 | 15-05-2025 |
 | Undone | A: entorno         | xx-xx-2025 | 27-05-2025 |
 | Undone | B: MCTS            | xx-xx-2025 | 27-05-2025 |
 | Undone | C: UAI             | xx-xx-2025 | 27-05-2025 |
