@@ -6,15 +6,16 @@ public class Deck : MonoBehaviour
 {
     private List<Card> _cardList;
 
-    public Deck()
+    void Start()
     {
         _cardList = new List<Card>();
         createDeck();
-        //shuffle(2);
+        shuffle(10);
     }
 
     private void createDeck()
     {
+        Debug.Log("//------Creando mazo.");
         _cardList.Clear();
         for (int i = 0; i < 4; i++)
         {
@@ -41,6 +42,7 @@ public class Deck : MonoBehaviour
 
     public void shuffle(int nTimes = 1)
     {
+        Debug.Log("//------Barajando mazo " + nTimes + " veces.");
         int n = _cardList.Count;
         for (int i = 0; i < nTimes; i++)
         {
@@ -52,17 +54,20 @@ public class Deck : MonoBehaviour
                 _cardList[k] = aux;
             }
         }
+        writeDeck();
     }
 
     public void resetDeck()
     {
+        Debug.Log("//------Reseteando mazo.");
         createDeck();
         shuffle(10);
     }
 
     public void writeDeck()
     {
-        Debug.Log("Numero de cartas: "+_cardList.Count);
+        Debug.Log("//------Escribiendo mazo.");
+        Debug.Log("Numero de cartas: " + _cardList.Count);
         for (int i = 0; i < _cardList.Count; i++)
         {
             Debug.Log("Carta: " + _cardList[i].getSuit() + _cardList[i].getNumber());

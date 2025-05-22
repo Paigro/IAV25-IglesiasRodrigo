@@ -23,8 +23,8 @@ public class GameManager : MonoBehaviour
         }
 
         Deck _deck = this.AddComponent<Deck>();
-        _deck.resetDeck();
-        _deck.writeDeck();
+        //_deck.resetDeck();
+        //_deck.writeDeck();
     }
 
     // Start is called before the first frame update
