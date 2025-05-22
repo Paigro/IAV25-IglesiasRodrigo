@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -20,6 +21,10 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        Deck _deck = this.AddComponent<Deck>();
+        _deck.resetDeck();
+        _deck.writeDeck();
     }
 
     // Start is called before the first frame update
