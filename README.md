@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/f4b9b183-4901-45e4-99ba-1119a831d928)# IAV25-IglesiasRodrigo
+# IAV25-IglesiasRodrigo
 
 ## Info:
 
