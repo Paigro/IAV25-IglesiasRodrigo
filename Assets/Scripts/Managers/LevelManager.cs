@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static GameManager;
 
 /// <summary>
 /// Manager that manage the cards game. 
@@ -210,7 +209,7 @@ public class LevelManager : MonoBehaviour
                 break;
             case LevelStates.LEVEL_RESULTS:
                 if (_nextState == LevelStates.EXIT)
-                    GameManager.Instance.RequestStateChange(GameStates.END);
+                    GameManager.Instance.RequestStateChange(GameManager.GameStates.END);
                 break;
         }
         Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
@@ -293,7 +292,9 @@ public class LevelManager : MonoBehaviour
         // 3 cartas para cada jugador.
         for (int i = 0; i < 3; i++)
         {
-            starting.AddCardToHand(_deck.DrawCard());
+            Card card= _deck.DrawCard();
+            starting.AddCardToHand(card);
+            GameManager.Instance._UIManager.SpawnCard(card);
             dealer.AddCardToHand(_deck.DrawCard());
         }
     }

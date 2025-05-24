@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,7 +11,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Referencia al UIManager.
     /// </summary>
-    private UIManager _UIManager;
+    public UIManager _UIManager;
     /// <summary>
     /// Referencia al LevelManager.
     /// </summary>
