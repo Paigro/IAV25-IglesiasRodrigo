@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static GameManager;
@@ -61,6 +60,27 @@ public class LevelManager : MonoBehaviour
 
     #endregion
 
+    #region Parameters:
+
+    /// <summary>
+    /// Para controlar el turno de jugadores.
+    /// </summary>
+    private bool _playerIsPlaying = false;
+    /// <summary>
+    /// Numero de rondas.
+    /// </summary>
+    private float _roundCount = 0;
+    /// <summary>
+    /// Puntos que lleva el jugador 1.
+    /// </summary>
+    private int _player1Points = 0;
+    /// <summary>
+    /// Puntos que lleva el jugador 2.
+    /// </summary>
+    private int _player2Points = 0;
+
+    #endregion
+
     #region Awake, Start and Update:
 
     private void Awake()
@@ -74,13 +94,14 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        _currentState = LevelStates.NONE;
     }
     void Start()
     {
         // Registro del LevelManager en el GameManager.
         GameManager.Instance.RegisterLevelManager(this);
 
-        // Creacion de
+        // Creacion del mazo.
         _deck = new GameObject("Deck").AddComponent<Deck>();
 
         // Creacion jugador 1.
@@ -105,14 +126,49 @@ public class LevelManager : MonoBehaviour
     }
     void Update()
     {
+        // Para el cambio de estados.
         switch (_currentState)
         {
             case LevelStates.DRAW_CARDS:
                 DrawCardsState();
                 break;
             case LevelStates.PLAYER:
-                PlayerTurnState();
+                if (!_playerIsPlaying)
+                {
+                    // Cuando el mazo se queda sin cartas y los jugadores tambien se pasa a la siguiente ronda pasando por los resultados.
+                    if (_deck.GetDeckCount() == 0 && _player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
+                    {
+                        CalculateRoundPoints();
+                        ResetThings();
+                        ChangeState(LevelStates.ROUND_RESULTS);
+                    }
+                    // Cuando los jugadores se quedan sin cartas en la mano.
+                    else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
+                    {
+                        _startingPlayer = !_startingPlayer; // Cambiamos el jugador que empieza porque en La Escoba se alternan.
+                        ChangeState(LevelStates.DRAW_CARDS); // Cambiamos a robar cartas.
+                    }
+                    else
+                    {
+                        PlayerTurnState();
+                    }
+                }
                 break;
+            case LevelStates.ROUND_RESULTS:
+                // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
+                if (_player1Points >= 21 || _player1Points >= 21)
+                {
+                    Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
+                    ChangeState(LevelStates.LEVEL_RESULTS);
+                }
+                break;
+            case LevelStates.LEVEL_RESULTS:
+                // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
+                ChangeState(LevelStates.EXIT);
+                break;
+            case LevelStates.EXIT:
+                break;
+
 
         }
     }
@@ -120,6 +176,10 @@ public class LevelManager : MonoBehaviour
     #endregion
 
     #region LevelStates Machine and methods:
+    /// <summary>
+    /// Cambia el estado desde fuera del objeto.
+    /// </summary>
+    /// <param name="newState"> Estado al que se quiere pasar.</param>
     public void RequestStateChange(LevelStates newState)
     {
         ChangeState(newState);
@@ -152,7 +212,7 @@ public class LevelManager : MonoBehaviour
                     GameManager.Instance.RequestStateChange(GameStates.END);
                 break;
         }
-        Debug.Log("//------Cambio de LevelState a " + _nextState);
+        Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
     }
 
     private void DrawCardsState()
@@ -167,8 +227,8 @@ public class LevelManager : MonoBehaviour
         Hand _player2Hand = _player2.GetPlayerHand();
 
         // Limpiamos la mesa y las manos y pilas de cada jugador.
-        _player1Hand.ClearAll();
-        _player2Hand.ClearAll();
+        _player1Hand.ResetHand();
+        _player2Hand.ResetHand();
         _table.ClearTable();
 
         // Cogemos a quien empieza y a quien reparte.
@@ -176,11 +236,7 @@ public class LevelManager : MonoBehaviour
         Hand dealer = _startingPlayer ? _player2Hand : _player1Hand;
 
         // Se reparten 3 cartas a cada jugador dependiendo de quien empiece.
-        for (int i = 0; i < 3; i++)
-        {
-            starting.AddCardToHand(_deck.DrawCard());
-            dealer.AddCardToHand(_deck.DrawCard());
-        }
+        PlayersDrawCards(starting, dealer);
 
         // Se reparte la mesa
         for (int i = 0; i < 4; i++)
@@ -197,7 +253,151 @@ public class LevelManager : MonoBehaviour
 
     private void PlayerTurnState()
     {
+        // Cogemos al jugador que le toca.
+        Player player = _startingPlayer ? _player1 : _player2;
 
+        // Juega.
+        _playerIsPlaying = true;
+        player.PlayTurn();
+
+        // Cambiamos el turno al siguiente jugador.
+        _startingPlayer = !_startingPlayer;
+    }
+
+    private void ResetThings()
+    {
+        // Limpiamos la mesa.
+        _table.ClearTable();
+
+        // Limpiamos a los jugadores.
+        _player1.ResetHand();
+        _player2.ResetHand();
+
+        // Limpiamos el mazo.
+        _deck.resetDeck();
+    }
+
+    public void NotifiyPlayerEndTurn()
+    {
+        _playerIsPlaying = false;
+    }
+
+    #endregion
+
+    #region Cards:
+
+    private void PlayersDrawCards(Hand starting, Hand dealer)
+    {
+        // 3 cartas para cada jugador.
+        for (int i = 0; i < 3; i++)
+        {
+            starting.AddCardToHand(_deck.DrawCard());
+            dealer.AddCardToHand(_deck.DrawCard());
+        }
+    }
+
+    #endregion
+
+    #region Points:
+
+    private void CalculateRoundPoints()
+    {
+        List<Card> stack1 = _player1.GetPlayerHand().GetCardsInStack();
+        List<Card> stack2 = _player2.GetPlayerHand().GetCardsInStack();
+
+        //------Sacamos el numero de cartas de cada jugador:
+        int nCards1 = _player1.GetPlayerHand().GetStackCount();
+        int nCards2 = _player2.GetPlayerHand().GetStackCount();
+
+        //------Sacamos el numero de 7s de cada jugador, los oros y si tiene el 7 de oros:
+        int nSevens1 = 0;
+        int nSevens2 = 0;
+        int nGolds1 = 0;
+        int nGolds2 = 0;
+
+        // del jugador 1.
+        for (int i = 0; i < stack1.Count; i++)
+        {
+            // Oros.
+            if (stack1[i].GetCardSuit() == 'O')
+            {
+                nGolds1++;
+            }
+            // Sietes.
+            if (stack1[i].GetCardNumber() == 7)
+            {
+                nSevens1++;
+                // Siete de oros.
+                if (stack1[i].GetCardSuit() == 'O')
+                {
+                    // PUNTO DE SIETE DE OROS.
+                    Debug.Log("[LEVEL MANAGER] Jugador 1 tiene el siete de oros.");
+                    _player1Points++;
+                }
+            }
+        }
+        // del jugador 2.
+        for (int i = 0; i < stack2.Count; i++)
+        {
+            // Oros.
+            if (stack2[i].GetCardSuit() == 'O')
+            {
+                nGolds2++;
+            }
+            // Sietes.
+            if (stack2[i].GetCardNumber() == 7)
+            {
+                nSevens2++;
+                // Siete de oros.
+                if (stack2[i].GetCardSuit() == 'O')
+                {
+                    // PUNTO DE SIETE DE OROS.
+                    Debug.Log("[LEVEL MANAGER] Jugador 2 tiene el siete de oros.");
+                    _player2Points++;
+                }
+            }
+        }
+
+        //------Hacemos las comparaciones y sumamos los puntos:
+        // PUNTO DE CARTAS.
+        if (nCards1 > nCards2) // Jugador 1 tiene mas cartas.
+        {
+            _player1Points += 1;
+        }
+        else if (nCards2 > nCards1) // Jugador 2 tiene mas cartas.
+        {
+            _player2Points += 1;
+        }
+        // else: empate a cartas, nadie suma.
+
+        // PUNTO DE SIETES.
+        if (nSevens1 > nSevens2) // Jugador 1 tiene mas sietes.
+        {
+            _player1Points += 1;
+        }
+        else if (nSevens2 > nSevens1) // Jugador 2 tiene mas sietes.
+        {
+            _player2Points += 1;
+        }
+        // else: empate a sietes, nadie suma.
+
+        // PUNTO DE OROS.
+        if (nGolds1 > nGolds2) // Jugador 1 tiene mas oros.
+        {
+            _player1Points += 1;
+        }
+        else if (nGolds2 > nGolds1) // Jugador 2 tiene mas oros.
+        {
+            _player2Points += 1;
+        }
+        // else: empate a oros, nadie suma.
+
+        //------Sumamos escobas:
+        // PUNTOS DE ESCOBAS.
+        _player1Points += _player1.GetPlayerHand().GetBrooms();
+        _player2Points += _player2.GetPlayerHand().GetBrooms();
+
+        Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------" + _player2Points + "------");
     }
 
     #endregion

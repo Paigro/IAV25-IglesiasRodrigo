@@ -8,14 +8,14 @@ public class Deck : MonoBehaviour
 {
     private List<Card> _cardsInDeck;
 
-    void Start()
+    void Awake()
     {
         _cardsInDeck = new List<Card>();
     }
 
     public void CreateDeck()
     {
-        Debug.Log("//------Creando mazo.");
+        Debug.Log("[MAZO] Creando mazo.");
         _cardsInDeck.Clear();
         for (int i = 0; i < 4; i++)
         {
@@ -42,7 +42,7 @@ public class Deck : MonoBehaviour
 
     public void Shuffle(int nTimes = 1)
     {
-        Debug.Log("//------Barajando mazo " + nTimes + " veces.");
+        Debug.Log("[MAZO] Barajando mazo " + nTimes + " veces.");
         int n = _cardsInDeck.Count;
         for (int i = 0; i < nTimes; i++)
         {
@@ -58,7 +58,7 @@ public class Deck : MonoBehaviour
 
     public void resetDeck()
     {
-        Debug.Log("//------Reseteando mazo.");
+        Debug.Log("[MAZO] Reseteando mazo.");
         CreateDeck();
         Shuffle(10);
     }
@@ -67,21 +67,25 @@ public class Deck : MonoBehaviour
     {
         if (_cardsInDeck.Count == 0)
         {
-            Debug.Log("//--No hay cartas en el mazo.");
+            Debug.Log("[MAZO] No hay cartas en el mazo.");
             return null;
         }
-        Card auxCard = _cardsInDeck[_cardsInDeck.Count - 1];
+        Card drawCard = _cardsInDeck[_cardsInDeck.Count - 1];
         _cardsInDeck.RemoveAt(_cardsInDeck.Count - 1);
-        return auxCard;
+        return drawCard;
+    }
+    public int GetDeckCount()
+    {
+        return _cardsInDeck.Count;
     }
 
     public void WriteDeck()
     {
-        Debug.Log("//------Escribiendo mazo.");
-        Debug.Log("Numero de cartas: " + _cardsInDeck.Count);
+        Debug.Log("[MAZO] Escribiendo mazo.");
+        Debug.Log("[MAZO] Numero de cartas: " + _cardsInDeck.Count);
         for (int i = 0; i < _cardsInDeck.Count; i++)
         {
-            Debug.Log("Carta: " + _cardsInDeck[i].GetCardName());
+            Debug.Log("[MAZO] Carta: " + _cardsInDeck[i].GetCardName());
         }
     }
 }

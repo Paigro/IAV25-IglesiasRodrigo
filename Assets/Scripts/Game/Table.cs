@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 /// <summary>
@@ -20,8 +21,12 @@ public class Table : MonoBehaviour
         if (card != null)
         {
             _cardsInTable.Add(card);
-            Debug.Log("Carta metida a mesa: " + card.GetCardName());
+            Debug.Log(" [MESA] Carta metida a mesa: " + card.GetCardName());
         }
+    }
+    public List<Card> GetCardsInTable()
+    {
+        return _cardsInTable;
     }
     public void ClearTable()
     {
@@ -38,7 +43,7 @@ public class Table : MonoBehaviour
         }
 
         int nBrooms = acc % 15;
-        Debug.Log("//------Hay " + nBrooms + " escobas en mesa inicial.");
+        Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
         if (nBrooms != 0)
         {
             ClearTable();
@@ -49,7 +54,7 @@ public class Table : MonoBehaviour
 
     public void WriteTable()
     {
-        Debug.Log("//------Cartas de la mesa: ");
+        Debug.Log("[MESA] Cartas de la mesa: ");
         for (int i = 0; i < _cardsInTable.Count; i++)
         {
             Debug.Log(_cardsInTable[i].GetCardName());

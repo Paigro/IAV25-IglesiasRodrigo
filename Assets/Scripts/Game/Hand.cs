@@ -10,6 +10,8 @@ public class Hand : MonoBehaviour
     private List<Card> _cardsInStack;
     private int _nBrooms;
 
+    #region Awake, Start and Update:
+
     private void Awake()
     {
         _cardsInHand = new List<Card>();
@@ -17,12 +19,15 @@ public class Hand : MonoBehaviour
         _nBrooms = 0;
     }
 
+    #endregion
+
     #region Common methods:
 
-    public void ClearAll()
+    public void ResetHand()
     {
-        _cardsInHand.Clear();
-        _cardsInStack.Clear();
+        ClearHand();
+        ClearStack();
+        _nBrooms = 0;
     }
 
     #endregion
@@ -34,21 +39,26 @@ public class Hand : MonoBehaviour
         if (card != null)
         {
             _cardsInHand.Add(card);
-            Debug.Log("Carta metida a mano: " + card.GetCardName());
+            Debug.Log(" [MANO] Carta metida a mano: " + card.GetCardName());
         }
     }
-    public void RemoveCardFromHand(Card card)
+    public void PlayCard(Card card)
     {
         _cardsInHand.Remove(card);
+    }
+    public int GetHandCount()
+    {
+        return _cardsInHand.Count;
     }
     public void ClearHand()
     {
         _cardsInHand.Clear();
     }
 
+
     public void WriteHand()
     {
-        Debug.Log("//------Cartas de la mano: ");
+        Debug.Log("[MANO] Cartas de la mano: ");
         for (int i = 0; i < _cardsInHand.Count; i++)
         {
             Debug.Log(_cardsInHand[i].GetCardName());
@@ -64,23 +74,17 @@ public class Hand : MonoBehaviour
         if (card != null)
         {
             _cardsInStack.Add(card);
-            Debug.Log("Carta metida a pila: " + card.GetCardName());
+            Debug.Log(" [MANO] [PILA] Carta metida a pila: " + card.GetCardName());
         }
     }
     public List<Card> GetCardsInStack()
     {
         return _cardsInStack;
     }
-
-    public void AddBroom(int nBrooms = 1)
+    public int GetStackCount()
     {
-        _nBrooms++;
+        return _cardsInStack.Count;
     }
-    public int GetBrooms()
-    {
-        return _nBrooms;
-    }
-
     public void ClearStack()
     {
         _cardsInStack.Clear();
@@ -88,11 +92,24 @@ public class Hand : MonoBehaviour
 
     public void WriteStack()
     {
-        Debug.Log("//------Cartas de la pila: ");
+        Debug.Log("[MANO] [PILA] Cartas de la pila: ");
         for (int i = 0; i < _cardsInStack.Count; i++)
         {
             Debug.Log(_cardsInStack[i].GetCardName());
         }
+    }
+
+    #endregion
+
+    #region Brooms:
+
+    public void AddBroom(int nBrooms = 1)
+    {
+        _nBrooms += nBrooms;
+    }
+    public int GetBrooms()
+    {
+        return _nBrooms;
     }
 
     #endregion

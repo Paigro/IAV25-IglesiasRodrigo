@@ -12,10 +12,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static GameManager Instance { get; private set; }
     /// <summary>
-    /// Referencia al mazo.
-    /// </summary>
-    public Deck _deck = null;
-    /// <summary>
     /// Referencia al UIManager.
     /// </summary>
     private UIManager _UIManager;
@@ -59,8 +55,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        _deck = this.AddComponent<Deck>();
     }
 
     // Start is called before the first frame update
@@ -72,11 +66,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_deck != null)
-        {
-            _deck.WriteDeck();
 
-        }
     }
 
     #endregion

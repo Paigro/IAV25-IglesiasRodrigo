@@ -79,15 +79,25 @@ public class Player : MonoBehaviour
         _hand.AddCardToHand(card);
     }
 
+    public void ResetHand()
+    {
+        _hand.ResetHand();
+    }
+
     #endregion
 
     #region Turn:
 
     public void PlayTurn()
     {
+        // TODO: separar si es humano o no pero eso ya para la E.
+
+
         //_model.findMove
         //if move guay then pickCards from table
         //else put card in table
+
+        LevelManager.Instance.NotifiyPlayerEndTurn();
     }
 
     #endregion
