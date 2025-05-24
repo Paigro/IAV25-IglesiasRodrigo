@@ -120,9 +120,6 @@ public class LevelManager : MonoBehaviour
 
         // Creacion de la mesa.
         _table = new GameObject("Table").AddComponent<Table>();
-
-        // El estado inicial es el de robar cartas.
-        _currentState = LevelStates.DRAW_CARDS;
     }
     void Update()
     {
@@ -195,6 +192,10 @@ public class LevelManager : MonoBehaviour
         _nextState = state;
         switch (_currentState)
         {
+            case LevelStates.NONE:
+                if (_nextState == LevelStates.DRAW_CARDS)
+                        _currentState = _nextState;
+                break;
             case LevelStates.DRAW_CARDS:
                 if (_nextState == LevelStates.PLAYER)
                     _currentState = _nextState;
@@ -219,8 +220,9 @@ public class LevelManager : MonoBehaviour
     {
         // Creamos el mazo y lo barajamos.
         _deck.CreateDeck();
+        //_deck.ReadDeckFromTxt();
         _deck.Shuffle(10);
-        _deck.WriteDeck(); // PAIGRO AQUI: eliminar cuando no haga falta.
+        //_deck.WriteDeck(); // PAIGRO AQUI: eliminar cuando no haga falta.
 
         // Cogemos las manos de los jugadores.
         Hand _player1Hand = _player1.GetPlayerHand();

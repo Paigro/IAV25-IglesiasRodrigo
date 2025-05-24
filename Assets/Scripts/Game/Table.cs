@@ -43,9 +43,9 @@ public class Table : MonoBehaviour
         }
 
         int nBrooms = 0;
-        if (acc % 15 == 1 || acc % 15 == 2)
+        if (acc % 15 == 0)
         {
-            nBrooms = acc % 15;
+            nBrooms = acc / 15;
         }
         Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
         if (nBrooms != 0)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour
     /// LEVEL = El juego en si gestionado por el LevelManager.
     /// END = Pantalla con los resultados finales de todas las partidas.
     /// </summary>
-    public enum GameStates { START,MENU, LEVEL, END }
+    public enum GameStates { START, MENU, LEVEL, END }
     /// <summary>
     /// Estado actual de juego.
     /// </summary>
@@ -40,6 +41,10 @@ public class GameManager : MonoBehaviour
     /// Siguiente estado del juego.
     /// </summary>
     private GameStates _nextState;
+    /// <summary>
+    /// Si se esta jugando un partida o no.
+    /// </summary>
+    private bool _gameInProgress = false;
 
     #endregion
 
@@ -66,12 +71,29 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        switch (_currentState)
+        {
+            case GameStates.START:
+                ChangeState(GameStates.MENU);
+                break;
+            case GameStates.MENU:
+                ChangeState(GameStates.LEVEL);
+                break;
+            case GameStates.LEVEL:
+                if (!_gameInProgress)
+                {
+                    ChangeState(GameStates.END);
+                }
+                break;
+            case GameStates.END:
+                ChangeState(GameStates.START);
+                break;
+        }
     }
 
     #endregion
 
-    #region Initial methods:
+    #region Register methods:
     public void RegisterUIManager(UIManager uiManager)
     {
         _UIManager = uiManager;
@@ -108,8 +130,13 @@ public class GameManager : MonoBehaviour
         switch (_currentState)
         {
             case GameStates.START:
-                if (_nextState == GameStates.LEVEL)
-                    _currentState = _nextState;
+                _currentState = _nextState;
+                // cambiar las cosas necesarias.
+                break;
+            case GameStates.MENU:
+                _currentState = _nextState;
+                _gameInProgress = true;
+                _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
                 // cambiar las cosas necesarias.
                 break;
             case GameStates.LEVEL:
@@ -119,7 +146,16 @@ public class GameManager : MonoBehaviour
                 // cambiar las cosas necesarias.
                 break;
         }
-        Debug.Log("//------Cambio de GameState a " + _nextState);
+        Debug.Log("[GAME MANAGER] Cambio de GameState a " + _nextState);
+    }
+
+    #endregion
+
+    #region Notifications:
+
+    public void NotifyGameIsOver()
+    {
+        _gameInProgress = false;
     }
 
     #endregion
