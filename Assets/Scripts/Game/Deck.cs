@@ -1,22 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Deck.
+/// </summary>
 public class Deck : MonoBehaviour
 {
-    private List<Card> _cardList;
+    private List<Card> _cardsInDeck;
 
     void Start()
     {
-        _cardList = new List<Card>();
-        createDeck();
-        shuffle(10);
+        _cardsInDeck = new List<Card>();
     }
 
-    private void createDeck()
+    public void CreateDeck()
     {
         Debug.Log("//------Creando mazo.");
-        _cardList.Clear();
+        _cardsInDeck.Clear();
         for (int i = 0; i < 4; i++)
         {
             for (int j = 1; j <= 10; j++)
@@ -24,53 +24,64 @@ public class Deck : MonoBehaviour
                 switch (i)
                 {
                     case 0:
-                        _cardList.Add(new Card('O', j));
+                        _cardsInDeck.Add(new Card('O', j));
                         break;
                     case 1:
-                        _cardList.Add(new Card('E', j));
+                        _cardsInDeck.Add(new Card('E', j));
                         break;
                     case 2:
-                        _cardList.Add(new Card('C', j));
+                        _cardsInDeck.Add(new Card('C', j));
                         break;
                     case 3:
-                        _cardList.Add(new Card('B', j));
+                        _cardsInDeck.Add(new Card('B', j));
                         break;
                 }
             }
         }
     }
 
-    public void shuffle(int nTimes = 1)
+    public void Shuffle(int nTimes = 1)
     {
         Debug.Log("//------Barajando mazo " + nTimes + " veces.");
-        int n = _cardList.Count;
+        int n = _cardsInDeck.Count;
         for (int i = 0; i < nTimes; i++)
         {
             for (int j = 0; j < n; j++)
             {
-                int k = Random.Range(0, j);
-                Card aux = _cardList[j];
-                _cardList[j] = _cardList[k];
-                _cardList[k] = aux;
+                int k = Random.Range(0, j + 1);
+                Card aux = _cardsInDeck[j];
+                _cardsInDeck[j] = _cardsInDeck[k];
+                _cardsInDeck[k] = aux;
             }
         }
-        writeDeck();
     }
 
     public void resetDeck()
     {
         Debug.Log("//------Reseteando mazo.");
-        createDeck();
-        shuffle(10);
+        CreateDeck();
+        Shuffle(10);
     }
 
-    public void writeDeck()
+    public Card DrawCard()
+    {
+        if (_cardsInDeck.Count == 0)
+        {
+            Debug.Log("//--No hay cartas en el mazo.");
+            return null;
+        }
+        Card auxCard = _cardsInDeck[_cardsInDeck.Count - 1];
+        _cardsInDeck.RemoveAt(_cardsInDeck.Count - 1);
+        return auxCard;
+    }
+
+    public void WriteDeck()
     {
         Debug.Log("//------Escribiendo mazo.");
-        Debug.Log("Numero de cartas: " + _cardList.Count);
-        for (int i = 0; i < _cardList.Count; i++)
+        Debug.Log("Numero de cartas: " + _cardsInDeck.Count);
+        for (int i = 0; i < _cardsInDeck.Count; i++)
         {
-            Debug.Log("Carta: " + _cardList[i].getSuit() + _cardList[i].getNumber());
+            Debug.Log("Carta: " + _cardsInDeck[i].GetCardName());
         }
     }
 }
