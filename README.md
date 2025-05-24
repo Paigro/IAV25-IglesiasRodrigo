@@ -1,4 +1,4 @@
-# IAV25-IglesiasRodrigo
+![image](https://github.com/user-attachments/assets/f4b9b183-4901-45e4-99ba-1119a831d928)# IAV25-IglesiasRodrigo
 
 ## Info:
 
@@ -330,6 +330,12 @@ D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
 
 ## Referencias:
 
+### Assets:
+
+[Cartas](https://fran-ko.itch.io/pixel-deck)
+
+### Modelos de IA:
+
 [MCTS1](https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/)
 
 [MCTS2](https://medium.com/@mattgmez98/using-the-monte-carlo-tree-search-algorithm-for-a-card-game-ai-simulation-40a0218494e4)
@@ -339,3 +345,4 @@ D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
 [Utility AI1](https://medium.com/@morganwalkupdev/ai-made-easy-with-utility-ai-fef94cd36161)
 
 [Utility AI2](https://shaggydev.com/2023/04/19/utility-ai)
+
