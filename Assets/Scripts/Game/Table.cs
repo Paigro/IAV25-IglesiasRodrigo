@@ -42,7 +42,11 @@ public class Table : MonoBehaviour
             acc += _cardsInTable[i].GetCardNumber();
         }
 
-        int nBrooms = acc % 15;
+        int nBrooms = 0;
+        if (acc % 15 == 1 || acc % 15 == 2)
+        {
+            nBrooms = acc % 15;
+        }
         Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
         if (nBrooms != 0)
         {
