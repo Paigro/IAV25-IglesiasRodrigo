@@ -31,10 +31,11 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Enum de estados de juego. 
     /// START = Menu de inicio del juego.
+    /// MENU = Menu donde se elige el numero de rondas y los modelos de IA de cada jugador.
     /// LEVEL = El juego en si gestionado por el LevelManager.
-    /// END = Menu con los resultados finales de todas las partidas.
+    /// END = Pantalla con los resultados finales de todas las partidas.
     /// </summary>
-    public enum GameStates { START, LEVEL, END }
+    public enum GameStates { START,MENU, LEVEL, END }
     /// <summary>
     /// Estado actual de juego.
     /// </summary>
@@ -107,10 +108,28 @@ public class GameManager : MonoBehaviour
 
     private void ChangeState(GameStates state)
     {
-        switch (state) 
+        _nextState = state;
+        //ui hace cosas.
+        UpdateState();
+    }
+
+    private void UpdateState()
+    {
+        switch (_currentState)
         {
-            // Ya ire haciendo la maquina de estados.
+            case GameStates.START:
+                if (_nextState == GameStates.LEVEL)
+                    _currentState = _nextState;
+                // cambiar las cosas necesarias.
+                break;
+            case GameStates.LEVEL:
+                // cambiar las cosas necesarias.
+                break;
+            case GameStates.END:
+                // cambiar las cosas necesarias.
+                break;
         }
+        Debug.Log("//------Cambio de GameState a " + _nextState);
     }
 
     #endregion

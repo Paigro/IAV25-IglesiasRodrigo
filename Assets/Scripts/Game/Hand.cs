@@ -17,6 +17,16 @@ public class Hand : MonoBehaviour
         _nBrooms = 0;
     }
 
+    #region Common methods:
+
+    public void ClearAll()
+    {
+        _cardsInHand.Clear();
+        _cardsInStack.Clear();
+    }
+
+    #endregion
+
     #region Hand of the player:
 
     public void AddCardToHand(Card card)
@@ -26,6 +36,10 @@ public class Hand : MonoBehaviour
             _cardsInHand.Add(card);
             Debug.Log("Carta metida a mano: " + card.GetCardName());
         }
+    }
+    public void RemoveCardFromHand(Card card)
+    {
+        _cardsInHand.Remove(card);
     }
     public void ClearHand()
     {
@@ -43,7 +57,7 @@ public class Hand : MonoBehaviour
 
     #endregion
 
-    #region Stack of player cards:
+    #region Stack of players cards:
 
     public void AddCardToStack(Card card)
     {

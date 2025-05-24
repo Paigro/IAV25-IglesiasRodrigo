@@ -22,11 +22,11 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Referencia a la mano del jugador 1.
     /// </summary>
-    private Hand _player1Hand = null;
+    private Player _player1 = null;
     /// <summary>
     /// Referencia a la mano del jugador 2.
     /// </summary>
-    private Hand _player2Hand = null;
+    private Player _player2 = null;
     /// <summary>
     /// Referencia a la mesa.
     /// </summary>
@@ -49,7 +49,7 @@ public class LevelManager : MonoBehaviour
     /// LEVEL_RESULTS = Menu con los resultados de la partida.
     /// EXIT = Para ir al final del juego.
     /// </summary>
-    public enum LevelStates { DRAW_CARDS, PLAYER, ROUND_RESULTS, LEVEL_RESULTS, EXIT }
+    public enum LevelStates { NONE, DRAW_CARDS, PLAYER, ROUND_RESULTS, LEVEL_RESULTS, EXIT }
     /// <summary>
     /// Estado actual de la partida.
     /// </summary>
@@ -77,11 +77,27 @@ public class LevelManager : MonoBehaviour
     }
     void Start()
     {
+        // Registro del LevelManager en el GameManager.
         GameManager.Instance.RegisterLevelManager(this);
 
+        // Creacion de
         _deck = new GameObject("Deck").AddComponent<Deck>();
-        _player1Hand = new GameObject("Hand P1").AddComponent<Hand>();
-        _player2Hand = new GameObject("Hand P2").AddComponent<Hand>();
+
+        // Creacion jugador 1.
+        _player1 = new GameObject("Player 1").AddComponent<Player>(); // PAIGRO AQUI: esto lo tendria que hacer el game manage creo.
+        Hand player1Hand = _player1.gameObject.AddComponent<Hand>();
+        _player1.SetPlayable(false);
+        _player1.SetHand(player1Hand);
+        //_player1.SetAIModel(null);
+
+        // Creacion jugador 2.
+        _player2 = new GameObject("Player 2").AddComponent<Player>();
+        Hand player2Hand = _player2.gameObject.AddComponent<Hand>();
+        _player2.SetPlayable(false);
+        _player2.SetHand(player2Hand);
+        //_player2.SetAIModel(null);
+
+        // Creacion de la mesa.
         _table = new GameObject("Table").AddComponent<Table>();
 
         // El estado inicial es el de robar cartas.
@@ -97,7 +113,7 @@ public class LevelManager : MonoBehaviour
             case LevelStates.PLAYER:
                 PlayerTurnState();
                 break;
-                
+
         }
     }
 
@@ -141,13 +157,21 @@ public class LevelManager : MonoBehaviour
 
     private void DrawCardsState()
     {
+        // Creamos el mazo y lo barajamos.
         _deck.CreateDeck();
         _deck.Shuffle(10);
+        _deck.WriteDeck(); // PAIGRO AQUI: eliminar cuando no haga falta.
 
-        _player1Hand.ClearHand();
-        _player2Hand.ClearHand();
+        // Cogemos las manos de los jugadores.
+        Hand _player1Hand = _player1.GetPlayerHand();
+        Hand _player2Hand = _player2.GetPlayerHand();
+
+        // Limpiamos la mesa y las manos y pilas de cada jugador.
+        _player1Hand.ClearAll();
+        _player2Hand.ClearAll();
         _table.ClearTable();
 
+        // Cogemos a quien empieza y a quien reparte.
         Hand starting = _startingPlayer ? _player1Hand : _player2Hand;
         Hand dealer = _startingPlayer ? _player2Hand : _player1Hand;
 
@@ -167,6 +191,7 @@ public class LevelManager : MonoBehaviour
         // Comprobar escobas en mesa inicial.
         dealer.AddBroom(_table.CheckInitBrooms()); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
 
+        // Siguiente estado.
         ChangeState(LevelStates.PLAYER);
     }
 
