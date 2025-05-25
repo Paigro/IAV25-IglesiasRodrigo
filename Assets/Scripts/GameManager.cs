@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Referencia al UIManager.
     /// </summary>
-    public UIManager _UIManager;
+    private UIManager _UIManager;
     /// <summary>
     /// Referencia al LevelManager.
     /// </summary>

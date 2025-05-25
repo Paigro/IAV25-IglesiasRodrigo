@@ -13,7 +13,6 @@ public class Table : MonoBehaviour
         _cardsInTable = new List<Card>();
     }
 
-
     public void AddCardToTable(Card card)
     {
         if (card != null)
@@ -45,7 +44,7 @@ public class Table : MonoBehaviour
         {
             nBrooms = acc / 15;
         }
-        Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
+        Debug.Log("[MESA] Acc: " + acc + " Hay " + nBrooms + " escobas en mesa inicial.");
         if (nBrooms != 0)
         {
             ClearTable();

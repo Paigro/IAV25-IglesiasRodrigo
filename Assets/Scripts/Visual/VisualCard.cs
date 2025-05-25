@@ -1,13 +1,17 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class VisualCard : MonoBehaviour
 {
+    [SerializeField] private SpriteRenderer _cardSprRen;
 
-    [SerializeField] private Image _cardImage;
+    private void Awake()
+    {
+        _cardSprRen = GetComponent<SpriteRenderer>();
+    }
 
     public void SetSprite(Sprite sprite)
     {
-        _cardImage.sprite = sprite;
+        Debug.LogWarning("gola");
+        _cardSprRen.sprite = sprite;
     }
 }

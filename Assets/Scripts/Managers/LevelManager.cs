@@ -1,11 +1,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
 /// <summary>
 /// Manager that manage the cards game. 
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
+    #region Constants:
+
+    private const float HAND_CARDS_OFFSET = 1.5f;
+
+    #endregion
+
+
+
+
 
     #region References:
 
@@ -14,25 +27,41 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public static LevelManager Instance { get; private set; }
     /// <summary>
-    /// El jugador que empieza la ronda pues se van alternando. TRUE = P1 y FALSE = P2.
+    /// Referencia al VisualCardsManager.
+    /// </summary>
+    private VisualCardsManager _VisualCardsManager;
+    /// <summary>
+    /// El jugador que empieza la ronda (pues se van alternando). TRUE = P1 y FALSE = P2.
     /// </summary>
     private bool _startingPlayer = true;
     /// <summary>
-    /// Referencia a la mano del jugador 1.
+    /// Referencia al prefab de la mano del jugador 1.
     /// </summary>
-    private Player _player1 = null;
+    [SerializeField]
+    private GameObject _player1PF = null;
     /// <summary>
-    /// Referencia a la mano del jugador 2.
+    /// Referencia al prefab de la mano del jugador 2.
     /// </summary>
-    private Player _player2 = null;
+    [SerializeField]
+    private GameObject _player2PF = null;
     /// <summary>
-    /// Referencia a la mesa.
+    /// Referencia al prefab de la mesa.
     /// </summary>
-    private Table _table = null;
+    [SerializeField]
+    private GameObject _tablePF = null;
     /// <summary>
-    /// Referencia al mazo.
+    /// Referencia al prefab del mazo.
     /// </summary>
+    [SerializeField]
+    private GameObject _deckPF = null;
+
     private Deck _deck = null;
+    private Player _player1 = null;
+    private Player _player2 = null;
+    private Table _table = null;
+
+
+
 
 
     #endregion
@@ -101,24 +130,30 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.RegisterLevelManager(this);
 
         // Creacion del mazo.
-        _deck = new GameObject("Deck").AddComponent<Deck>();
+        _deck = Instantiate(_deckPF).GetComponent<Deck>();
+        _deck.gameObject.name = "Deck";
+        _deck.gameObject.transform.position = new Vector3(-8.0f, 0, 0);
+        _deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
 
         // Creacion jugador 1.
-        _player1 = new GameObject("Player 1").AddComponent<Player>(); // PAIGRO AQUI: esto lo tendria que hacer el game manage creo.
-        Hand player1Hand = _player1.gameObject.AddComponent<Hand>();
+        _player1 = Instantiate(_player1PF).GetComponent<Player>();
         _player1.SetPlayable(false);
-        _player1.SetHand(player1Hand);
+        _player1.SetHand(_player1.GetComponent<Hand>());
         //_player1.SetAIModel(null);
+        _player1.gameObject.name = "Player1";
+        _player1.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, -3.8f, 0);
 
         // Creacion jugador 2.
-        _player2 = new GameObject("Player 2").AddComponent<Player>();
-        Hand player2Hand = _player2.gameObject.AddComponent<Hand>();
+        _player2 = Instantiate(_player2PF).GetComponent<Player>();
         _player2.SetPlayable(false);
-        _player2.SetHand(player2Hand);
-        //_player2.SetAIModel(null);
+        _player2.SetHand(_player2.GetComponent<Hand>());
+        //_player1.SetAIModel(null);
+        _player2.gameObject.name = "Player2";
+        _player2.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, 3.8f, 0);
 
         // Creacion de la mesa.
-        _table = new GameObject("Table").AddComponent<Table>();
+        _table = Instantiate(_tablePF).GetComponent<Table>();
+        _table.gameObject.name = "Table";
     }
     void Update()
     {
@@ -164,9 +199,16 @@ public class LevelManager : MonoBehaviour
                 break;
             case LevelStates.EXIT:
                 break;
-
-
         }
+    }
+
+    #endregion
+
+    #region Register methods:
+
+    public void RegisterVisualCardsManager(VisualCardsManager visualCardsManager)
+    {
+        _VisualCardsManager = visualCardsManager;
     }
 
     #endregion
@@ -193,7 +235,7 @@ public class LevelManager : MonoBehaviour
         {
             case LevelStates.NONE:
                 if (_nextState == LevelStates.DRAW_CARDS)
-                        _currentState = _nextState;
+                    _currentState = _nextState;
                 break;
             case LevelStates.DRAW_CARDS:
                 if (_nextState == LevelStates.PLAYER)
@@ -292,10 +334,12 @@ public class LevelManager : MonoBehaviour
         // 3 cartas para cada jugador.
         for (int i = 0; i < 3; i++)
         {
-            Card card= _deck.DrawCard();
+            Card card = _deck.DrawCard();
+            _VisualCardsManager.SpawnCard(card.GetCardName(), _player1.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             starting.AddCardToHand(card);
-            GameManager.Instance._UIManager.SpawnCard(card);
-            dealer.AddCardToHand(_deck.DrawCard());
+            card = _deck.DrawCard();
+            _VisualCardsManager.SpawnCard(card.GetCardName(), _player2.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            dealer.AddCardToHand(card);
         }
     }
 
