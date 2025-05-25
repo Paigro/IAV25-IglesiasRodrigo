@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.VisualScripting;
 
 public class MCTS : IAModel
 {
@@ -191,8 +189,8 @@ public class MCTS : IAModel
                     current.RemoveAt(current.Count - 1);
                 }
             }
-
             Backtrack(0, new List<Card>(), 0);
+
             return result;
         }
     }

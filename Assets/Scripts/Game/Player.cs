@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
         // TODO: separar si es humano o no pero eso ya para la E.
 
 
-        //_model.findMove
+        //_model.FindMove();
         //if move guay then pickCards from table
         //else put card in table
 

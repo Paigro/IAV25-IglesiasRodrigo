@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 
 /// <summary>
@@ -29,28 +30,40 @@ public class Table : MonoBehaviour
     {
         _cardsInTable.Clear();
     }
-
+    /// <summary>
+    /// Comprueba si hay escobas en la mesa inicial.
+    /// </summary>
+    /// <returns>El numero de escobas en la mesa</returns>
     public int CheckInitBrooms()
     {
-        int acc = 0;
-
-        for (int i = 0; i < _cardsInTable.Count; i++)
-        {
-            acc += _cardsInTable[i].GetCardNumber();
-        }
+        int sum = GetTableSum();
 
         int nBrooms = 0;
-        if (acc % 15 == 0)
+        if (sum % 15 == 0)
         {
-            nBrooms = acc / 15;
+            nBrooms = sum / 15;
         }
-        Debug.Log("[MESA] Acc: " + acc + " Hay " + nBrooms + " escobas en mesa inicial.");
+        Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
         if (nBrooms != 0)
         {
             ClearTable();
         }
 
         return nBrooms;
+    }
+    /// <summary>
+    /// Calcula el total de puntos de la mesa.
+    /// </summary>
+    /// <returns>Los puntos totales de la mesa.</returns>
+    public int GetTableSum()
+    {
+        int acc = 0;
+        for (int i = 0; i < _cardsInTable.Count; i++)
+        {
+            acc += _cardsInTable[i].GetCardNumber();
+        }
+        Debug.Log("[MESA] Puntos en mesa: " + acc);
+        return acc;
     }
 
     public void WriteTable()
