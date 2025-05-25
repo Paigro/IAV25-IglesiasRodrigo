@@ -244,6 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cardPrefab: {fileID: 1504545911193321520, guid: c5d8efbf745447541b357ea77270bff0, type: 3}
+  _cardsMovementSpeed: 1
 --- !u!4 &914569444
 Transform:
   m_ObjectHideFlags: 0

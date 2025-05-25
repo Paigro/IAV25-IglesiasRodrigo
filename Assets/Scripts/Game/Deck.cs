@@ -56,7 +56,7 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void resetDeck()
+    public void ResetDeck()
     {
         Debug.Log("[MAZO] Reseteando mazo.");
         CreateDeck();

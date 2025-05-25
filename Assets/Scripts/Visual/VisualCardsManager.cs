@@ -5,6 +5,7 @@ using UnityEngine;
 public class VisualCardsManager : MonoBehaviour
 {
     [SerializeField] private GameObject _cardPrefab; // Prefab de carta.
+    [SerializeField] private float _cardsMovementSpeed = 1.0f; // Velocidad de las cartas al moverse.
 
     private Transform _deckTrans; // Transform del mazo.
     private Transform _tableTrans; // Transform de la mesa.
@@ -15,12 +16,14 @@ public class VisualCardsManager : MonoBehaviour
 
     private Dictionary<string, Sprite> _spriteDict; // Diccionario que asocia el nombre de la carta con su sprite.
 
+    List<GameObject> _cardsGaOb;
 
     void Start()
     {
         LevelManager.Instance.RegisterVisualCardsManager(this);
 
         _spriteDict = new Dictionary<string, Sprite>();
+        _cardsGaOb = new List<GameObject>();
 
         Sprite[] sprites = Resources.LoadAll<Sprite>("Cards");
         foreach (Sprite sprite in sprites)
@@ -29,42 +32,72 @@ public class VisualCardsManager : MonoBehaviour
         }
     }
     /// <summary>
-    /// Crea una carta como hijo de un transform con un posicion relativa.
+    /// 
     /// </summary>
-    /// <param name="cardName"></param>
     /// <param name="where"></param>
-    /// <param name="offsetFromWhere"></param>
-    public void SpawnCard(string cardName, Transform where, Vector2 offsetFromWhere = new Vector2())
+    public void SpawnAllDeck(Transform where)
     {
-        GameObject newCard = Instantiate(_cardPrefab, where);
-        newCard.name = cardName;
-        newCard.transform.localPosition = offsetFromWhere;
+        string[] suits = { "O", "C", "E", "B" };
 
-        VisualCard cardVC = newCard.GetComponent<VisualCard>();
-        if (_spriteDict.TryGetValue(cardName, out Sprite sprite))
+        foreach (string suit in suits)
         {
-            cardVC.SetSprite(sprite);
-        }
-        else
-        {
-            Debug.LogWarning("[VISUAL CARD MANAGER]: sprite no encontrado." + cardName);
+            for (int i = 1; i <= 10; i++)
+            {
+                string cardName = suit + i;
+
+                GameObject card = Instantiate(_cardPrefab, where);
+                card.name = cardName;
+
+                if (_spriteDict.TryGetValue(cardName, out Sprite sprite))
+                    card.GetComponent<VisualCard>().SetSprite(sprite);
+                else
+                    Debug.Log("[VISUAL CARD MANAGER] Sprite no encontrado: " + cardName);
+
+                _cardsGaOb.Add(card);
+            }
         }
     }
+
     /// <summary>
-    /// Sobrecarga del metodo anterior para mover las imagenes.
+    /// Moves a card to.
     /// </summary>
     /// <param name="cardName"></param>
     /// <param name="whereToGo"></param>
-    /// <param name="offsetFromWhere"></param>
-    /// <param name="fromWhereToGo"></param>
-    public void SpawnCard(string cardName, Transform whereToGo, Vector2 offsetFromWhere = new Vector2(), Vector2 fromWhereToGo = new Vector2())
+    public void MoveCardTo(string cardName, Transform whereToGo, Vector2 offsetFromWhere = new Vector2())
     {
+        foreach (GameObject card in _cardsGaOb)
+        {
+            if (card.name == cardName)
+            {
+                StartCoroutine(AnimateMove(card.transform, whereToGo, offsetFromWhere));
+                return;
+            }
+        }
+
+        Debug.LogWarning("[VISUAL CARD MANAGER] No se encontro la carta con nombre: " + cardName);
 
     }
-
-
-    public void MoveCardTo(string cardName, Transform whereToGo)
+    private IEnumerator AnimateMove(Transform card, Transform destination, Vector2 offset)
     {
-       
+        Vector3 startPos = card.position;
+        Vector3 endPos = destination.position + (Vector3)offset;  // Suma el offset aquí (convertido a Vector3)
+        Quaternion startRot = card.rotation;
+        Quaternion endRot = destination.rotation;
+
+        float duration = _cardsMovementSpeed;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            card.position = Vector3.Lerp(startPos, endPos, t);
+            card.rotation = Quaternion.Lerp(startRot, endRot, t);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        card.position = endPos;
+        card.rotation = endRot;
+        //card.SetParent(destination);
     }
 }

@@ -1,8 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-
-
 
 
 /// <summary>
@@ -16,10 +14,6 @@ public class LevelManager : MonoBehaviour
 
     #endregion
 
-
-
-
-
     #region References:
 
     /// <summary>
@@ -30,10 +24,6 @@ public class LevelManager : MonoBehaviour
     /// Referencia al VisualCardsManager.
     /// </summary>
     private VisualCardsManager _VisualCardsManager;
-    /// <summary>
-    /// El jugador que empieza la ronda (pues se van alternando). TRUE = P1 y FALSE = P2.
-    /// </summary>
-    private bool _startingPlayer = true;
     /// <summary>
     /// Referencia al prefab de la mano del jugador 1.
     /// </summary>
@@ -54,15 +44,22 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject _deckPF = null;
-
+    /// <summary>
+    /// Referencia al mazo.
+    /// </summary>
     private Deck _deck = null;
+    /// <summary>
+    /// Referencia al jugador 1.
+    /// </summary>
     private Player _player1 = null;
+    /// <summary>
+    /// Referencia al jugador 2.
+    /// </summary>
     private Player _player2 = null;
+    /// <summary>
+    /// Referecia a la mesa.
+    /// </summary>
     private Table _table = null;
-
-
-
-
 
     #endregion
 
@@ -95,17 +92,29 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private bool _playerIsPlaying = false;
     /// <summary>
-    /// Numero de rondas.
-    /// </summary>
-    private float _roundCount = 0;
-    /// <summary>
     /// Puntos que lleva el jugador 1.
     /// </summary>
     private int _player1Points = 0;
     /// <summary>
+    /// Victorias que lleva el jugador 1.
+    /// </summary>
+    private int _player1Wins = 0;
+    /// <summary>
     /// Puntos que lleva el jugador 2.
     /// </summary>
     private int _player2Points = 0;
+    /// <summary>
+    /// Victorias que lleva el jugador 2.
+    /// </summary>
+    private int _player2Wins = 0;
+    /// <summary>
+    /// El jugador que empieza la ronda (pues se van alternando). TRUE = P1 y FALSE = P2.
+    /// </summary>
+    private bool _startingPlayer = true;
+    /// <summary>
+    /// Numero de rondas que lleva la partida
+    /// </summary>
+    private int _nRounds;
 
     #endregion
 
@@ -154,7 +163,7 @@ public class LevelManager : MonoBehaviour
         // Creacion de la mesa.
         _table = Instantiate(_tablePF).GetComponent<Table>();
         _table.gameObject.name = "Table";
-        _table.gameObject.transform.position = new Vector3((-HAND_CARDS_OFFSET) * 2, 0, 0);
+        _table.gameObject.transform.position = new Vector3(0, 0, 0);
     }
     void Update()
     {
@@ -162,7 +171,14 @@ public class LevelManager : MonoBehaviour
         switch (_currentState)
         {
             case LevelStates.DRAW_CARDS:
-                DrawCardsState();
+                if (_nRounds == 0) // Si es la ronda inicial entonces 
+                {
+                    SetUpGame();
+                }
+                else
+                {
+                    DrawCardsState();
+                }
                 break;
             case LevelStates.PLAYER:
                 if (!_playerIsPlaying)
@@ -172,6 +188,7 @@ public class LevelManager : MonoBehaviour
                     {
                         CalculateRoundPoints();
                         ResetThings();
+                        // TODO: Reset del _VCM.
                         ChangeState(LevelStates.ROUND_RESULTS);
                     }
                     // Cuando los jugadores se quedan sin cartas en la mano.
@@ -190,6 +207,10 @@ public class LevelManager : MonoBehaviour
                 // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
                 if (_player1Points >= 21 || _player1Points >= 21)
                 {
+                    if (_player1Points >= 21)
+                        _player1Wins += 1;
+                    else
+                        _player2Wins += 1;
                     Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
                     ChangeState(LevelStates.LEVEL_RESULTS);
                 }
@@ -205,7 +226,7 @@ public class LevelManager : MonoBehaviour
 
     #endregion
 
-    #region Register methods:
+    #region Register methods and important getters:
 
     public void RegisterVisualCardsManager(VisualCardsManager visualCardsManager)
     {
@@ -215,6 +236,7 @@ public class LevelManager : MonoBehaviour
     #endregion
 
     #region LevelStates Machine and methods:
+
     /// <summary>
     /// Cambia el estado desde fuera del objeto.
     /// </summary>
@@ -258,13 +280,17 @@ public class LevelManager : MonoBehaviour
         Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
     }
 
-    private void DrawCardsState()
+    #endregion
+
+    #region LevelStates Methods:
+
+    private void SetUpGame()
     {
         // Creamos el mazo y lo barajamos.
         _deck.CreateDeck();
         //_deck.ReadDeckFromTxt();
         _deck.Shuffle(10);
-        //_deck.WriteDeck(); // PAIGRO AQUI: eliminar cuando no haga falta.
+        _VisualCardsManager.SpawnAllDeck(_deck.transform);
 
         // Cogemos las manos de los jugadores.
         Hand _player1Hand = _player1.GetPlayerHand();
@@ -288,14 +314,30 @@ public class LevelManager : MonoBehaviour
             Card card = _deck.DrawCard();
             _table.AddCardToTable(card);
 
-            _VisualCardsManager.SpawnCard(card.GetCardName(), _table.transform, new Vector2(i * HAND_CARDS_OFFSET, 0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), _table.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
         }
 
         // Comprobar escobas en mesa inicial.
         dealer.AddBroom(_table.CheckInitBrooms()); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
 
+        //  Avanzamos de ronda.
+        _nRounds++;
         // Siguiente estado.
         ChangeState(LevelStates.PLAYER);
+    }
+
+    private void DrawCardsState()
+    {
+        // Cogemos las manos de los jugadores.
+        Hand _player1Hand = _player1.GetPlayerHand();
+        Hand _player2Hand = _player2.GetPlayerHand();
+
+        // Cogemos a quien empieza y a quien reparte.
+        Hand starting = _startingPlayer ? _player1Hand : _player2Hand;
+        Hand dealer = _startingPlayer ? _player2Hand : _player1Hand;
+
+        // Se reparten 3 cartas a cada jugador dependiendo de quien empiece.
+        PlayersDrawCards(starting, dealer);
     }
 
     private void PlayerTurnState()
@@ -313,6 +355,8 @@ public class LevelManager : MonoBehaviour
 
     private void ResetThings()
     {
+        _nRounds = 0;
+
         // Limpiamos la mesa.
         _table.ClearTable();
 
@@ -321,7 +365,7 @@ public class LevelManager : MonoBehaviour
         _player2.ResetHand();
 
         // Limpiamos el mazo.
-        _deck.resetDeck();
+        _deck.ResetDeck();
     }
 
     public void NotifiyPlayerEndTurn()
@@ -339,10 +383,10 @@ public class LevelManager : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             Card card = _deck.DrawCard();
-            _VisualCardsManager.SpawnCard(card.GetCardName(), _player1.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), _player1.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             starting.AddCardToHand(card);
             card = _deck.DrawCard();
-            _VisualCardsManager.SpawnCard(card.GetCardName(), _player2.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), _player2.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             dealer.AddCardToHand(card);
         }
     }
@@ -351,6 +395,9 @@ public class LevelManager : MonoBehaviour
 
     #region Points:
 
+    /// <summary>
+    /// Al acabar la ronda se calcula los puntos que ha conseguida cada jugador.
+    /// </summary>
     private void CalculateRoundPoints()
     {
         List<Card> stack1 = _player1.GetPlayerHand().GetCardsInStack();
@@ -449,6 +496,15 @@ public class LevelManager : MonoBehaviour
         _player2Points += _player2.GetPlayerHand().GetBrooms();
 
         Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------" + _player2Points + "------");
+    }
+
+    /// <summary>
+    /// Devuelve los puntos de cada jugador en una tupla.
+    /// </summary>
+    /// <returns>Una tupla con los puntos de cada jugador.</returns>
+    private Tuple<int, int> GetPlayerPoints()
+    {
+        return new Tuple<int, int>(_player1Points, _player2Points);
     }
 
     #endregion
