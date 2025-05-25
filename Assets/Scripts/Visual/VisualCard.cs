@@ -11,7 +11,6 @@ public class VisualCard : MonoBehaviour
 
     public void SetSprite(Sprite sprite)
     {
-        Debug.LogWarning("gola");
         _cardSprRen.sprite = sprite;
     }
 }

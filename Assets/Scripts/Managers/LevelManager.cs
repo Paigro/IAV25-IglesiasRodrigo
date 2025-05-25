@@ -154,6 +154,7 @@ public class LevelManager : MonoBehaviour
         // Creacion de la mesa.
         _table = Instantiate(_tablePF).GetComponent<Table>();
         _table.gameObject.name = "Table";
+        _table.gameObject.transform.position = new Vector3((-HAND_CARDS_OFFSET) * 2, 0, 0);
     }
     void Update()
     {
@@ -284,7 +285,10 @@ public class LevelManager : MonoBehaviour
         // Se reparte la mesa
         for (int i = 0; i < 4; i++)
         {
-            _table.AddCardToTable(_deck.DrawCard());
+            Card card = _deck.DrawCard();
+            _table.AddCardToTable(card);
+
+            _VisualCardsManager.SpawnCard(card.GetCardName(), _table.transform, new Vector2(i * HAND_CARDS_OFFSET, 0f));
         }
 
         // Comprobar escobas en mesa inicial.

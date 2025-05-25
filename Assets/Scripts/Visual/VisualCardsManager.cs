@@ -35,12 +35,12 @@ public class VisualCardsManager : MonoBehaviour
     /// </summary>
     /// <param name="cardName"></param>
     /// <param name="where"></param>
-    /// <param name="posFromWhere"></param>
-    public void SpawnCard(string cardName, Transform where, Vector2 posFromWhere = new Vector2())
+    /// <param name="offsetFromWhere"></param>
+    public void SpawnCard(string cardName, Transform where, Vector2 offsetFromWhere = new Vector2())
     {
         GameObject newCard = Instantiate(_cardPrefab, where);
         newCard.name = cardName;
-        newCard.transform.localPosition = posFromWhere;
+        newCard.transform.localPosition = offsetFromWhere;
 
         VisualCard cardVC = newCard.GetComponent<VisualCard>();
         if (_spriteDict.TryGetValue(cardName, out Sprite sprite))
@@ -51,5 +51,16 @@ public class VisualCardsManager : MonoBehaviour
         {
             Debug.LogWarning("[VISUAL CARD MANAGER]: sprite no encontrado." + cardName);
         }
+    }
+    /// <summary>
+    /// Sobrecarga del metodo anterior para mover las imagenes.
+    /// </summary>
+    /// <param name="cardName"></param>
+    /// <param name="whereToGo"></param>
+    /// <param name="offsetFromWhere"></param>
+    /// <param name="fromWhereToGo"></param>
+    public void SpawnCard(string cardName, Transform whereToGo, Vector2 offsetFromWhere = new Vector2(), Vector2 fromWhereToGo = new Vector2())
+    {
+
     }
 }
