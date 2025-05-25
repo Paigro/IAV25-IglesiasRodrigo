@@ -67,12 +67,11 @@ public class Deck : MonoBehaviour
     {
         if (_cardsInDeck.Count == 0)
         {
-            Debug.Log("[MAZO] No hay cartas en el mazo.");
+            Debug.LogWarning("[MAZO] No hay cartas en el mazo.");
             return null;
         }
         Card drawCard = _cardsInDeck[_cardsInDeck.Count - 1];
         _cardsInDeck.RemoveAt(_cardsInDeck.Count - 1);
-        //Debug.LogWarning("Carta sacada: " + drawCard.GetCardName());
         return drawCard;
     }
     public int GetDeckCount()
@@ -82,11 +81,10 @@ public class Deck : MonoBehaviour
 
     public void WriteDeck()
     {
-        Debug.Log("[MAZO] Escribiendo mazo.");
-        Debug.Log("[MAZO] Numero de cartas: " + _cardsInDeck.Count);
+        Debug.Log("[MAZO] Escribiendo mazo con " + _cardsInDeck.Count + " cartas.");
         for (int i = 0; i < _cardsInDeck.Count; i++)
         {
-            Debug.Log("[MAZO] Carta: " + _cardsInDeck[i].GetCardName());
+            Debug.Log("Carta: " + _cardsInDeck[i].GetCardName());
         }
     }
 

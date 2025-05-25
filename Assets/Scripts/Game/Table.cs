@@ -19,7 +19,7 @@ public class Table : MonoBehaviour
         if (card != null)
         {
             _cardsInTable.Add(card);
-            Debug.Log(" [MESA] Carta metida a mesa: " + card.GetCardName());
+            //Debug.Log(" [MESA] Carta metida a mesa: " + card.GetCardName());
         }
     }
     public void RemoveCardToTable(Card card)
@@ -47,7 +47,7 @@ public class Table : MonoBehaviour
         {
             nBrooms = sum / 15;
         }
-        Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
+        //Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
         return nBrooms;
     }
     /// <summary>
@@ -61,7 +61,7 @@ public class Table : MonoBehaviour
         {
             acc += _cardsInTable[i].GetCardNumber();
         }
-        Debug.Log("[MESA] Puntos en mesa: " + acc);
+        //Debug.Log("[MESA] Puntos en mesa: " + acc);
         return acc;
     }
 

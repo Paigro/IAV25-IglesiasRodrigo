@@ -39,7 +39,7 @@ public class Hand : MonoBehaviour
         if (card != null)
         {
             _cardsInHand.Add(card);
-            Debug.Log(" [MANO] Carta metida a mano: " + card.GetCardName());
+            //Debug.Log(" [MANO] Carta metida a mano: " + card.GetCardName());
         }
     }
     public void PlayCard(Card card)
@@ -76,7 +76,7 @@ public class Hand : MonoBehaviour
         if (card != null)
         {
             _cardsInStack.Add(card);
-            Debug.Log(" [MANO] [PILA] Carta metida a pila: " + card.GetCardName());
+            //Debug.Log(" [MANO] [PILA] Carta metida a pila: " + card.GetCardName());
         }
     }
     public List<Card> GetCardsInStack()
@@ -107,7 +107,7 @@ public class Hand : MonoBehaviour
 
     public void AddBroom(int nBrooms = 1)
     {
-        Debug.Log("[MANO] [ESCOBAS] Escoba sumada.");
+        //Debug.Log("[MANO] [ESCOBAS] Escoba sumada.");
         _nBrooms += nBrooms;
     }
     public int GetBrooms()

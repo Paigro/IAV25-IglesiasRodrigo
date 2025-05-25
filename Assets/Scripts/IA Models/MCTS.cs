@@ -6,13 +6,13 @@ public class MCTS : IAModel
 {
     public override List<Card> FindMove(List<Card> hand, List<Card> table)
     {
-        Debug.Log("[MCTS] Inicio de FindMove");
+        //Debug.Log("[MCTS] Inicio de FindMove");
 
         MCTSState initState = new MCTSState(hand, table); // Creamos el estado inicial.
 
         MCTSState bestState = FindMove(initState); // Buscamos le mejor jugada.
 
-        Debug.Log("[MCTS] Fin de FindMove. Jugada elegida: " + string.Join(", ", bestState.pickedCards.Select(c => c.ToString())));
+        //Debug.Log("[MCTS] Fin de FindMove. Jugada elegida: " + string.Join(", ", bestState.pickedCards.Select(c => c.GetCardName())));
 
         return bestState.pickedCards; // Devolvemos las cartas usadas,
     }
@@ -171,7 +171,7 @@ public class MCTS : IAModel
                 // Sietes.
                 if (pickedCards[i].GetCardNumber() == 7)
                 {
-                    score += 20;
+                    score += 30;
                     // Siete de oros.
                     if (pickedCards[i].GetCardSuit() == 'O')
                     {

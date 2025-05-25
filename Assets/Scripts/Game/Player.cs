@@ -20,23 +20,6 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    #region Awake, Start and Update:
-
-    private void Awake()
-    {
-
-    }
-    void Start()
-    {
-
-    }
-    void Update()
-    {
-
-    }
-
-    #endregion
-
     #region Setters:
 
     public void SetPlayable(bool playable)
@@ -101,7 +84,7 @@ public class Player : MonoBehaviour
             Debug.Log("[PLAYER] Jugada que coje cartas.");
             for (int i = 0; i < move.Count; i++)
             {
-                Debug.LogWarning(move[i].GetCardName());
+                Debug.Log(move[i].GetCardName());
             }
         }
         else if (move.Count == 1)
@@ -110,22 +93,22 @@ public class Player : MonoBehaviour
             Debug.Log("[PLAYER] Jugada que deja carta en mesa.");
             for (int i = 0; i < move.Count; i++)
             {
-                Debug.LogWarning(move[i].GetCardName());
+                Debug.Log(move[i].GetCardName());
             }
         }
         else
         {
-            Debug.Log("[PLAYER] Errooooooooooooooooooooorrrrr");
+            Debug.LogError("[PLAYER] ERROR al calcular movimiento.");
         }
 
         if (_model != null)
         {
-            Debug.Log("[PLAYER] Notificacion a LevelManager");
+            //Debug.Log("[PLAYER] Notificacion a LevelManager");
             LevelManager.Instance.NotifiyPlayerEndTurn(move);
         }
         else
         {
-            Debug.Log("[PLAYER] Hola Paigro");
+            Debug.LogError("[PLAYER] ERROR no hay modelo de IA.");
         }
     }
 

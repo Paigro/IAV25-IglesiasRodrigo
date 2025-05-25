@@ -139,10 +139,18 @@ public class LevelManager : MonoBehaviour
 
     #region Timers:
 
-    [SerializeField]
-    private float _timer = 0;
+    /// <summary>
+    /// Contador de tiempo.
+    /// </summary>
+    private float _timer;
+    /// <summary>
+    /// Para saber si hay un timer activo o no.
+    /// </summary>
     private bool _usingTimer = false;
-
+    /// <summary>
+    /// Establece un timer para el Update con un tiempo determinado.
+    /// </summary>
+    /// <param name="newTime"></param>
     public void SetTimer(float newTime = 2f)
     {
         _usingTimer = true;
@@ -151,7 +159,6 @@ public class LevelManager : MonoBehaviour
     }
 
     #endregion
-
 
     #region Awake, Start and Update:
 
@@ -183,7 +190,7 @@ public class LevelManager : MonoBehaviour
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
         _player1.SetPlayable(false);
         _player1.SetHand(_player1.GetComponent<Hand>());
-        _player1.SetAIModel(new UtilityAI());
+        _player1.SetAIModel(new MCTS());
         _player1.gameObject.name = "Player1";
         _player1.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, -3.8f, 0);
 
@@ -191,7 +198,7 @@ public class LevelManager : MonoBehaviour
         _player2 = Instantiate(_player2PF).GetComponent<Player>();
         _player2.SetPlayable(false);
         _player2.SetHand(_player2.GetComponent<Hand>());
-        _player2.SetAIModel(new UtilityAI());
+        _player2.SetAIModel(new MCTS());
         _player2.gameObject.name = "Player2";
         _player2.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, 3.8f, 0);
 
@@ -208,7 +215,7 @@ public class LevelManager : MonoBehaviour
             switch (_currentState)
             {
                 case LevelStates.DRAW_CARDS:
-                    SetTimer(4);
+                    SetTimer(1);
                     if (_nRounds == 0) // Si es la ronda inicial entonces 
                     {
                         SetUpGame();
@@ -227,7 +234,8 @@ public class LevelManager : MonoBehaviour
                             GiveSomeoneLastCards();
                             CalculateRoundPoints();
                             ResetThings();
-                            _VisualCardsManager.ResetVisualCards();
+                            _startingPlayer = !_startingPlayer;
+                            _VisualCardsManager.ResetVisualCards(_deck.transform);
                             ChangeState(LevelStates.ROUND_RESULTS);
                         }
                         // Cuando los jugadores se quedan sin cartas en la mano.
@@ -243,7 +251,7 @@ public class LevelManager : MonoBehaviour
                     break;
                 case LevelStates.ROUND_RESULTS:
                     // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
-                    if (_player1Points >= 21 || _player1Points >= 21)
+                    if (_player1Points >= 21 || _player2Points >= 21)
                     {
                         if (_player1Points >= 21)
                             _player1Wins += 1;
@@ -252,6 +260,7 @@ public class LevelManager : MonoBehaviour
                         Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
                         ChangeState(LevelStates.LEVEL_RESULTS);
                     }
+                    ChangeState(LevelStates.DRAW_CARDS);
                     break;
                 case LevelStates.LEVEL_RESULTS:
                     // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
@@ -263,12 +272,11 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            //Debug.Log("[LEVEL MANAGER] --timer.");
             _timer -= Time.deltaTime;
             if (_timer <= 0)
             {
                 _usingTimer = false;
-                Debug.Log("[LEVEL MANAGER] Se acabo el timer.");
+                //Debug.Log("[LEVEL MANAGER] Se acabo el timer.");
             }
         }
     }
@@ -326,7 +334,7 @@ public class LevelManager : MonoBehaviour
                     GameManager.Instance.RequestStateChange(GameManager.GameStates.END);
                 break;
         }
-        Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
+        //Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
     }
 
     #endregion
@@ -495,7 +503,7 @@ public class LevelManager : MonoBehaviour
 
             if (_table.GetTableSum() == 0)
             {
-                Debug.Log("Escoba para jugador: " + _startingPlayer);
+                //Debug.Log("Escoba para jugador: " + _startingPlayer);
                 playerHand.AddBroom();
             }
 
@@ -508,12 +516,12 @@ public class LevelManager : MonoBehaviour
     {
         Hand playerHand = _lastPlayerThatPutInTable == 1 ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
         Transform objetive = _startingPlayer ? _stack2.transform : _stack1.transform; // Setteamos el objetivo del movimiento. Al reves porque despues del execute se intercambia.
-        Debug.Log("[LEVEL MANAGER] Cartas finales: " + _table.GetCardsInTable().Count);
+        //Debug.Log("[LEVEL MANAGER] Cartas finales: " + _table.GetCardsInTable().Count);
         int i = 0;
         while (_table.GetCardsInTable().Count > 0)
         {
             Card tableCard = _table.GetCardsInTable()[0];
-            Debug.Log("[LEVEL MANAGER] Cartas finales: " + tableCard.GetCardName());
+            //Debug.Log("[LEVEL MANAGER] Cartas finales: " + tableCard.GetCardName());
             playerHand.AddCardToStack(tableCard); // Metemos la carta en la pila del jugador.
             _table.RemoveCardToTable(tableCard); // La quitamos de la mesa.
             _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
@@ -643,7 +651,7 @@ public class LevelManager : MonoBehaviour
         _player2Points += brooms2;
         Debug.Log("[LEVEL MANAGER] Escobas: " + brooms1 + "-" + brooms2);
 
-        Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------" + _player2Points + "------");
+        Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------JUGADOR2: " + _player2Points + "------");
     }
 
     /// <summary>
