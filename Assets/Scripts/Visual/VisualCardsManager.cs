@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class VisualCardsManager : MonoBehaviour
 {
@@ -65,39 +66,17 @@ public class VisualCardsManager : MonoBehaviour
     /// <param name="whereToGo"></param>
     public void MoveCardTo(string cardName, Transform whereToGo, Vector2 offsetFromWhere = new Vector2())
     {
-        foreach (GameObject card in _cardsGaOb)
+        GameObject card = _cardsGaOb.Find(c => c.name == cardName);
+        if (card == null)
         {
-            if (card.name == cardName)
-            {
-                StartCoroutine(AnimateMove(card.transform, whereToGo, offsetFromWhere));
-                return;
-            }
+            Debug.LogWarning("[VISUAL CARD MANAGER] No se encontró la carta con nombre: " + cardName);
+            return;
         }
 
-        Debug.LogWarning("[VISUAL CARD MANAGER] No se encontro la carta con nombre: " + cardName);
+        Vector3 targetPos = whereToGo.position + (Vector3)offsetFromWhere;
+        Quaternion targetRot = whereToGo.rotation;
 
-    }
-    private IEnumerator AnimateMove(Transform card, Transform destination, Vector2 offset)
-    {
-        Vector3 startPos = card.position;
-        Vector3 endPos = destination.position + (Vector3)offset;  // Suma el offset aquí (convertido a Vector3)
-        Quaternion startRot = card.rotation;
-        Quaternion endRot = destination.rotation;
-
-        float duration = _cardsMovementSpeed;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            float t = elapsed / duration;
-            card.position = Vector3.Lerp(startPos, endPos, t);
-            card.rotation = Quaternion.Lerp(startRot, endRot, t);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        card.position = endPos;
-        card.rotation = endRot;
-        //card.SetParent(destination);
+        // Mover suavemente a targetPos en 0.5 segundos
+        card.transform.DOMove(targetPos, _cardsMovementSpeed).SetEase(Ease.OutQuad);
     }
 }

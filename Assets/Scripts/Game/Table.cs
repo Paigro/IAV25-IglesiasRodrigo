@@ -22,6 +22,10 @@ public class Table : MonoBehaviour
             Debug.Log(" [MESA] Carta metida a mesa: " + card.GetCardName());
         }
     }
+    public void RemoveCardToTable(Card card)
+    {
+        _cardsInTable.Remove(card);
+    }
     public List<Card> GetCardsInTable()
     {
         return _cardsInTable;
@@ -44,11 +48,6 @@ public class Table : MonoBehaviour
             nBrooms = sum / 15;
         }
         Debug.Log("[MESA] Hay " + nBrooms + " escobas en mesa inicial.");
-        if (nBrooms != 0)
-        {
-            ClearTable();
-        }
-
         return nBrooms;
     }
     /// <summary>

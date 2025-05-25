@@ -6,10 +6,13 @@ public class MCTS : IAModel
 {
     public override List<Card> FindMove(List<Card> hand, List<Card> table)
     {
+        Debug.Log("[MCTS] Inicio de FindMove");
 
         MCTSState initState = new MCTSState(hand, table); // Creamos el estado inicial.
 
         MCTSState bestState = FindMove(initState); // Buscamos le mejor jugada.
+
+        Debug.Log("[MCTS] Fin de FindMove. Jugada elegida: " + string.Join(", ", bestState.pickedCards.Select(c => c.ToString())));
 
         return bestState.pickedCards; // Devolvemos las cartas usadas,
     }
@@ -24,10 +27,15 @@ public class MCTS : IAModel
             MCTSNode expandedNode = ExpandNode(selectedNode); // Fase de expansion del nodo seleccionado.
             float score = Simulate(expandedNode); // Fase de simular. Nos quedamos con la puntuacion.
             Backpropagate(expandedNode, score); // Fase de propagar hacia atras.
+
+            //Debug.Log("[MCTS] Iteracion " + i + ": Score=" + score);
         }
 
-        return GetBestChild(initNode).currentState;
+        var best = GetBestChild(initNode).currentState;
+        //Debug.Log("[MCTS] Mejor jugada tras iterar: " + string.Join(", ", best.pickedCards.Select(c => c.ToString())));
+        return best;
     }
+
     // Fase del MCTS de seleccionar un nodo dado uno inicial.
     private MCTSNode SelectNode(MCTSNode initNode)
     {
@@ -39,12 +47,17 @@ public class MCTS : IAModel
                 return ucb1;
             }).First();
         }
+
+        //Debug.Log("[MCTS] Nodo seleccionado sin hijos: " + initNode);
         return initNode;
     }
+
     // Fase del MCTS de expandir dado un nodo. Le metemos sus posibles hijos.
     private MCTSNode ExpandNode(MCTSNode nodeToExpand)
     {
         List<MCTSState> moves = nodeToExpand.currentState.GetLegalMoves();
+
+        //Debug.Log("[MCTS] Expandiendo nodo con: " + moves.Count + " movimientos ");
 
         // Metemos al nodo los posibles hijos.
         for (int i = 0; i < moves.Count; i++)
@@ -53,13 +66,20 @@ public class MCTS : IAModel
         }
 
         // Devolvemos o un hijo aleatorio del nodo que hemos expandido o el propio nodo si no se han generado hijos.
-        return nodeToExpand.children.Count > 0 ? nodeToExpand.children[Random.Range(0, nodeToExpand.children.Count)] : nodeToExpand;
+        MCTSNode finalNode = nodeToExpand.children.Count > 0 ? nodeToExpand.children[Random.Range(0, nodeToExpand.children.Count)] : nodeToExpand;
+
+        //Debug.Log("[MCTS] Nodo expandido: " + finalNode);
+        return finalNode;
     }
+
     // Fase del MCTS de simular dado un nodo. Cogemos la puntuacion que tenga y la devolvemos.
     private float Simulate(MCTSNode simulatedNode)
     {
-        return simulatedNode.currentState.GetScore();
+        float score = simulatedNode.currentState.GetScore();
+        //Debug.Log("[MCTS] Simulacion devuelve score: " + score);
+        return score;
     }
+
     // Fase del MCTS de propagar hacia atras el nodo.
     private void Backpropagate(MCTSNode node, float score)
     {
@@ -69,11 +89,15 @@ public class MCTS : IAModel
             node.wins += score;
             node = node.parentNode;
         }
+        //Debug.Log("[MCTS] Backpropagation completada con score: " + score);
     }
+
     // Ordena la lista de hijos del nodo por win rate y devuelve el primero.
     private MCTSNode GetBestChild(MCTSNode initNode)
     {
-        return initNode.children.OrderByDescending(child => child.wins/ child.visits ).FirstOrDefault();
+        var best = initNode.children.OrderByDescending(child => child.wins / child.visits).FirstOrDefault();
+        //Debug.Log("[MCTS] Mejor hijo con winrate: " + (best?.wins / best?.visits));
+        return best;
     }
 
     //------------Clases necesarias para el MCTS------------//
@@ -107,6 +131,8 @@ public class MCTS : IAModel
                     MCTSState nextState = CloneState();
                     nextState.selectedCard = playerHand[i];
                     nextState.playerHand.Remove(playerHand[i]);
+                    nextState.tableCards.Add(playerHand[i]);
+                    nextState.pickedCards = new List<Card>() { playerHand[i] };
                     result.Add(nextState);
                 }
                 else
@@ -126,8 +152,11 @@ public class MCTS : IAModel
                     }
                 }
             }
+
+            //Debug.Log("[MCTS] Generadas : " + result.Count + " jugadas.");
             return result;
         }
+
         // Asignamos puntos dependiendo de las cartas que haya cogido.
         public float GetScore()
         {
@@ -146,17 +175,26 @@ public class MCTS : IAModel
                     // Siete de oros.
                     if (pickedCards[i].GetCardSuit() == 'O')
                     {
-                        score += 20;
+                        score += 50;
                     }
                 }
             }
             // Escoba.
             if (tableCards.Count == 0 && pickedCards.Count > 0)
             {
-                score += 50;
+                score += 100;
             }
+
+            // Dejar carta en mesa es malo, pero tiene que modificar al score sino peta.
+            if (pickedCards.Count == 0)
+            {
+                score += 1f;
+            }
+
+            //Debug.Log("[MCTS] Score calculado: " + score + " para pickedCards: " + string.Join(", ", pickedCards.Select(c => c.GetCardName())));
             return score;
         }
+
         // Devuelve un estado copia del original.
         public MCTSState CloneState()
         {
@@ -168,6 +206,7 @@ public class MCTS : IAModel
                 selectedCard = this.selectedCard
             };
         }
+
         // Da todas las combinaciones posibles dado un target objetivo (15 - la carta seleccionada).
         private List<List<Card>> GetCombinations(int target)
         {
@@ -189,11 +228,12 @@ public class MCTS : IAModel
                     current.RemoveAt(current.Count - 1);
                 }
             }
-            Backtrack(0, new List<Card>(), 0);
 
+            Backtrack(0, new List<Card>(), 0);
             return result;
         }
     }
+
     private class MCTSNode
     {
         public MCTSState currentState;

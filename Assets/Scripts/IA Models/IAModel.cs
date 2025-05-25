@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-public abstract class IAModel : MonoBehaviour
+public abstract class IAModel
 {
     /// <summary>
     /// Dada la mano y la mesa, busca el mejor movimiento y devuelve una lista con las cartas que usa. 

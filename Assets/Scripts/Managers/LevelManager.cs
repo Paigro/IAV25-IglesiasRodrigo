@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 
@@ -44,6 +45,19 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject _deckPF = null;
+    /// <summary>
+    /// Referencia a la pial del jugador 1.
+    /// </summary>
+    [SerializeField]
+    private GameObject _stack1 = null;
+    /// <summary>
+    /// Referencia a la pila del jugador 2.
+    /// </summary>
+    [SerializeField]
+    private GameObject _stack2 = null;
+
+
+
     /// <summary>
     /// Referencia al mazo.
     /// </summary>
@@ -115,8 +129,28 @@ public class LevelManager : MonoBehaviour
     /// Numero de rondas que lleva la partida
     /// </summary>
     private int _nRounds;
+    /// <summary>
+    /// Ultimo jugador que ha puesto en la mesa. Si (-1 => Nadie), (0 => Jugador 2), (1 => Jugador 1). En paridad con el bool _startingPlayer
+    /// </summary>
+    private int _lastPlayerThatPutInTable = -1;
 
     #endregion
+
+    #region Timers:
+
+    [SerializeField]
+    private float _timer = 0;
+    private bool _usingTimer = false;
+
+    public void SetTimer(float newTime = 2f)
+    {
+        _usingTimer = true;
+        _timer = newTime;
+        Debug.Log("[LEVEL MANAGER] Empieza un timer de " + newTime + " segundos.");
+    }
+
+    #endregion
+
 
     #region Awake, Start and Update:
 
@@ -148,7 +182,7 @@ public class LevelManager : MonoBehaviour
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
         _player1.SetPlayable(false);
         _player1.SetHand(_player1.GetComponent<Hand>());
-        //_player1.SetAIModel(null);
+        _player1.SetAIModel(new MCTS());
         _player1.gameObject.name = "Player1";
         _player1.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, -3.8f, 0);
 
@@ -156,7 +190,7 @@ public class LevelManager : MonoBehaviour
         _player2 = Instantiate(_player2PF).GetComponent<Player>();
         _player2.SetPlayable(false);
         _player2.SetHand(_player2.GetComponent<Hand>());
-        //_player1.SetAIModel(null);
+        _player2.SetAIModel(new UtilityAI());
         _player2.gameObject.name = "Player2";
         _player2.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, 3.8f, 0);
 
@@ -167,60 +201,74 @@ public class LevelManager : MonoBehaviour
     }
     void Update()
     {
-        // Para el cambio de estados.
-        switch (_currentState)
+        if (!_usingTimer)
         {
-            case LevelStates.DRAW_CARDS:
-                if (_nRounds == 0) // Si es la ronda inicial entonces 
-                {
-                    SetUpGame();
-                }
-                else
-                {
-                    DrawCardsState();
-                }
-                break;
-            case LevelStates.PLAYER:
-                if (!_playerIsPlaying)
-                {
-                    // Cuando el mazo se queda sin cartas y los jugadores tambien se pasa a la siguiente ronda pasando por los resultados.
-                    if (_deck.GetDeckCount() == 0 && _player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
+            // Para el cambio de estados.
+            switch (_currentState)
+            {
+                case LevelStates.DRAW_CARDS:
+                    SetTimer(4);
+                    if (_nRounds == 0) // Si es la ronda inicial entonces 
                     {
-                        CalculateRoundPoints();
-                        ResetThings();
-                        // TODO: Reset del _VCM.
-                        ChangeState(LevelStates.ROUND_RESULTS);
-                    }
-                    // Cuando los jugadores se quedan sin cartas en la mano.
-                    else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
-                    {
-                        _startingPlayer = !_startingPlayer; // Cambiamos el jugador que empieza porque en La Escoba se alternan.
-                        ChangeState(LevelStates.DRAW_CARDS); // Cambiamos a robar cartas.
+                        SetUpGame();
                     }
                     else
                     {
-                        PlayerTurnState();
+                        DrawCardsState();
                     }
-                }
-                break;
-            case LevelStates.ROUND_RESULTS:
-                // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
-                if (_player1Points >= 21 || _player1Points >= 21)
-                {
-                    if (_player1Points >= 21)
-                        _player1Wins += 1;
-                    else
-                        _player2Wins += 1;
-                    Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
-                    ChangeState(LevelStates.LEVEL_RESULTS);
-                }
-                break;
-            case LevelStates.LEVEL_RESULTS:
-                // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
-                ChangeState(LevelStates.EXIT);
-                break;
-            case LevelStates.EXIT:
-                break;
+                    break;
+                case LevelStates.PLAYER:
+                    if (!_playerIsPlaying)
+                    {
+                        // Cuando el mazo se queda sin cartas y los jugadores tambien se pasa a la siguiente ronda pasando por los resultados.
+                        if (_deck.GetDeckCount() == 0 && _player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
+                        {
+                            CalculateRoundPoints();
+                            ResetThings();
+                            // TODO: Reset del _VCM.
+                            ChangeState(LevelStates.ROUND_RESULTS);
+                        }
+                        // Cuando los jugadores se quedan sin cartas en la mano.
+                        else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
+                        {
+                            _startingPlayer = !_startingPlayer; // Cambiamos el jugador que empieza porque en La Escoba se alternan.
+                            ChangeState(LevelStates.DRAW_CARDS); // Cambiamos a robar cartas.
+                        }
+                        else
+                        {
+                            PlayerTurnState();
+                        }
+                    }
+                    break;
+                case LevelStates.ROUND_RESULTS:
+                    // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
+                    if (_player1Points >= 21 || _player1Points >= 21)
+                    {
+                        if (_player1Points >= 21)
+                            _player1Wins += 1;
+                        else
+                            _player2Wins += 1;
+                        Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
+                        ChangeState(LevelStates.LEVEL_RESULTS);
+                    }
+                    break;
+                case LevelStates.LEVEL_RESULTS:
+                    // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
+                    ChangeState(LevelStates.EXIT);
+                    break;
+                case LevelStates.EXIT:
+                    break;
+            }
+        }
+        else
+        {
+            //Debug.Log("[LEVEL MANAGER] --timer.");
+            _timer -= Time.deltaTime;
+            if (_timer <= 0)
+            {
+                _usingTimer = false;
+                Debug.Log("[LEVEL MANAGER] Se acabo el timer.");
+            }
         }
     }
 
@@ -317,8 +365,20 @@ public class LevelManager : MonoBehaviour
             _VisualCardsManager.MoveCardTo(card.GetCardName(), _table.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
         }
 
-        // Comprobar escobas en mesa inicial.
-        dealer.AddBroom(_table.CheckInitBrooms()); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
+        //// Comprobar escobas en mesa inicial.
+        //int initBrooms = _table.CheckInitBrooms();
+        //if (initBrooms > 0)
+        //{
+        //    dealer.AddBroom(initBrooms); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
+            
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        Card tableCard = _table.GetCardsInTable()[i];
+        //        dealer.AddCardToStack(tableCard); // Metemos la carta a la pila.
+        //        _table.RemoveCardToTable(tableCard); // Quitamos la carta de la mesa.
+        //        _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), dealer.transform);
+        //    }
+        //}
 
         //  Avanzamos de ronda.
         _nRounds++;
@@ -347,14 +407,14 @@ public class LevelManager : MonoBehaviour
 
         // Juega.
         _playerIsPlaying = true;
-        player.PlayTurn();
+        player.PlayTurn(new List<Card>(_table.GetCardsInTable())); // Para evitr que se pueda modificar la lista original se le pasa otra nueva.
 
-        // Cambiamos el turno al siguiente jugador.
-        _startingPlayer = !_startingPlayer;
+
     }
 
     private void ResetThings()
     {
+        // Reseteamos el numero de rondas.
         _nRounds = 0;
 
         // Limpiamos la mesa.
@@ -366,10 +426,18 @@ public class LevelManager : MonoBehaviour
 
         // Limpiamos el mazo.
         _deck.ResetDeck();
+
+        // Reseteamos el ultimo jugador en poner carta en mesa.
+        _lastPlayerThatPutInTable = -1;
     }
 
-    public void NotifiyPlayerEndTurn()
+    public void NotifiyPlayerEndTurn(List<Card> move)
     {
+        // Ejecutamos el movimiento.
+        ExecutePlayerMove(move);
+        // Cambiamos el turno al siguiente jugador.
+        _startingPlayer = !_startingPlayer;
+        // Cambiamos el bool para que todo prosiga. PAIGRO AQUI: Esto mejor con un temporaizador para que se muestren las cartas, etc...
         _playerIsPlaying = false;
     }
 
@@ -389,6 +457,40 @@ public class LevelManager : MonoBehaviour
             _VisualCardsManager.MoveCardTo(card.GetCardName(), _player2.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             dealer.AddCardToHand(card);
         }
+    }
+
+    private void ExecutePlayerMove(List<Card> move)
+    {
+        // Cogemos la mano del jugador que acaba de jugar.
+        Hand playerHand = _startingPlayer ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
+
+        Card cardUsed = move[0];
+        if (move.Count == 1) // Ha dejado carta en la mesa: hay que quitarla de la mano.
+        {
+            _table.AddCardToTable(cardUsed); // Metemos la carta a la mesa.
+            playerHand.PlayCard(cardUsed); // Quitamos la carta de la mano.
+            _VisualCardsManager.MoveCardTo(cardUsed.GetCardName(), _table.transform); // Movemos la carta. PAIGRO AQUI: aunque alomejor habria que enseñarla primero.
+        }
+        else if (move.Count > 1) // Coge cartas: hay que quitarla de la mano y mover las de la mesa a la pila.
+        {
+            Transform objetive = _startingPlayer ? _stack1.transform : _stack2.transform; // Setteamos el objetivo del movimiento.
+
+            playerHand.PlayCard(cardUsed); // Quitamos la carta de la mano.
+            playerHand.AddCardToStack(cardUsed); // Pero la metemos a la pila.
+            _VisualCardsManager.MoveCardTo(cardUsed.GetCardName(), objetive);
+
+            // Movemos las cartas de la mesa a la pila y las quitamos de la mesa.
+            for (int i = 1; i < move.Count; i++)
+            {
+                Card tableCard = move[i];
+                playerHand.AddCardToStack(tableCard); // Metemos la carta a la pila.
+                _table.RemoveCardToTable(tableCard); // Quitamos la carta de la mesa.
+                _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
+            }
+
+            _lastPlayerThatPutInTable = _startingPlayer ? 1 : 0; // Nos guardamos el ulitmo jugador que ha puesto en la mesa.
+        }
+        SetTimer();
     }
 
     #endregion

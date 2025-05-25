@@ -50,12 +50,14 @@ public class Hand : MonoBehaviour
     {
         return _cardsInHand.Count;
     }
+    public List<Card> GetCardsInHand()
+    {
+        return _cardsInHand;
+    }
     public void ClearHand()
     {
         _cardsInHand.Clear();
     }
-
-
     public void WriteHand()
     {
         Debug.Log("[MANO] Cartas de la mano: ");
