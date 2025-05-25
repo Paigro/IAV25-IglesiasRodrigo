@@ -166,23 +166,23 @@ public class MCTS : IAModel
                 // Oros.
                 if (pickedCards[i].GetCardSuit() == 'O')
                 {
-                    score += 5;
+                    score += 10;
                 }
                 // Sietes.
                 if (pickedCards[i].GetCardNumber() == 7)
                 {
-                    score += 10;
+                    score += 20;
                     // Siete de oros.
                     if (pickedCards[i].GetCardSuit() == 'O')
                     {
-                        score += 50;
+                        score += 100;
                     }
                 }
             }
             // Escoba.
             if (tableCards.Count == 0 && pickedCards.Count > 0)
             {
-                score += 100;
+                score += 150;
             }
 
             // Dejar carta en mesa es malo, pero tiene que modificar al score sino peta.

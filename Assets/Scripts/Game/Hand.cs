@@ -107,6 +107,7 @@ public class Hand : MonoBehaviour
 
     public void AddBroom(int nBrooms = 1)
     {
+        Debug.Log("[MANO] [ESCOBAS] Escoba sumada.");
         _nBrooms += nBrooms;
     }
     public int GetBrooms()

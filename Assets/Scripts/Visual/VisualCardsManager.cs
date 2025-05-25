@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Unity.VisualScripting;
 
 public class VisualCardsManager : MonoBehaviour
 {
@@ -78,5 +79,9 @@ public class VisualCardsManager : MonoBehaviour
 
         // Mover suavemente a targetPos en 0.5 segundos
         card.transform.DOMove(targetPos, _cardsMovementSpeed).SetEase(Ease.OutQuad);
+    }
+    public void ResetVisualCards()
+    {
+        Debug.LogWarning("[VISUAL CARD MANAGER] Reset.");
     }
 }

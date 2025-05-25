@@ -4,8 +4,8 @@ using UnityEngine;
 public class UtilityAI : IAModel
 {
     [SerializeField] private float BROOM_COST = 2f; // The cost added when making a Scopa (clean the table).
-    [SerializeField] private float GOLDEN_SEVEN_COST = 0.6f; // The cost added when the golden seven is in the move.
-    [SerializeField] private float SEVEN_COST = 0.3f; // The cost added when sevens are in the move.
+    [SerializeField] private float GOLDEN_SEVEN_COST = 0.7f; // The cost added when the golden seven is in the move.
+    [SerializeField] private float SEVEN_COST = 0.4f; // The cost added when sevens are in the move.
     [SerializeField] private float GOLD_COST = 0.2f; // The cost added when golds are in the move.
     [SerializeField] private float CARD_COST = 0.1f; // The cost added for every card in the move.
     [SerializeField] private float CARD_LEAVE_COST = 0.2f; // The cost for leaving a card in the table.

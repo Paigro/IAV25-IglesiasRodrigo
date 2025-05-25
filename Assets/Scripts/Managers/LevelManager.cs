@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
+using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 
 
@@ -182,7 +183,7 @@ public class LevelManager : MonoBehaviour
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
         _player1.SetPlayable(false);
         _player1.SetHand(_player1.GetComponent<Hand>());
-        _player1.SetAIModel(new MCTS());
+        _player1.SetAIModel(new UtilityAI());
         _player1.gameObject.name = "Player1";
         _player1.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, -3.8f, 0);
 
@@ -223,15 +224,15 @@ public class LevelManager : MonoBehaviour
                         // Cuando el mazo se queda sin cartas y los jugadores tambien se pasa a la siguiente ronda pasando por los resultados.
                         if (_deck.GetDeckCount() == 0 && _player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
                         {
+                            GiveSomeoneLastCards();
                             CalculateRoundPoints();
                             ResetThings();
-                            // TODO: Reset del _VCM.
+                            _VisualCardsManager.ResetVisualCards();
                             ChangeState(LevelStates.ROUND_RESULTS);
                         }
                         // Cuando los jugadores se quedan sin cartas en la mano.
                         else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
                         {
-                            _startingPlayer = !_startingPlayer; // Cambiamos el jugador que empieza porque en La Escoba se alternan.
                             ChangeState(LevelStates.DRAW_CARDS); // Cambiamos a robar cartas.
                         }
                         else
@@ -370,7 +371,7 @@ public class LevelManager : MonoBehaviour
         //if (initBrooms > 0)
         //{
         //    dealer.AddBroom(initBrooms); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
-            
+
         //    for (int i = 0; i < 4; i++)
         //    {
         //        Card tableCard = _table.GetCardsInTable()[i];
@@ -380,7 +381,7 @@ public class LevelManager : MonoBehaviour
         //    }
         //}
 
-        //  Avanzamos de ronda.
+        // Avanzamos de ronda.
         _nRounds++;
         // Siguiente estado.
         ChangeState(LevelStates.PLAYER);
@@ -398,6 +399,10 @@ public class LevelManager : MonoBehaviour
 
         // Se reparten 3 cartas a cada jugador dependiendo de quien empiece.
         PlayersDrawCards(starting, dealer);
+        // Avanzamos de ronda.
+        _nRounds++;
+        // Siguiente estado.
+        ChangeState(LevelStates.PLAYER);
     }
 
     private void PlayerTurnState()
@@ -488,9 +493,31 @@ public class LevelManager : MonoBehaviour
                 _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
             }
 
-            _lastPlayerThatPutInTable = _startingPlayer ? 1 : 0; // Nos guardamos el ulitmo jugador que ha puesto en la mesa.
+            if (_table.GetTableSum() == 0)
+            {
+                Debug.Log("Escoba para jugador: " + _startingPlayer);
+                playerHand.AddBroom();
+            }
+
+            _lastPlayerThatPutInTable = _startingPlayer ? 1 : 0; // Nos guardamos el ultimo jugador que ha puesto en la mesa.
         }
-        SetTimer();
+        SetTimer(1);
+    }
+
+    private void GiveSomeoneLastCards()
+    {
+        Hand playerHand = _lastPlayerThatPutInTable == 1 ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
+        Transform objetive = _startingPlayer ? _stack2.transform : _stack1.transform; // Setteamos el objetivo del movimiento. Al reves porque despues del execute se intercambia.
+        Debug.Log("[LEVEL MANAGER] Cartas finales: " + _table.GetCardsInTable().Count);
+        int i = 0;
+        while (_table.GetCardsInTable().Count > 0)
+        {
+            Card tableCard = _table.GetCardsInTable()[0];
+            Debug.Log("[LEVEL MANAGER] Cartas finales: " + tableCard.GetCardName());
+            playerHand.AddCardToStack(tableCard); // Metemos la carta en la pila del jugador.
+            _table.RemoveCardToTable(tableCard); // La quitamos de la mesa.
+            _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
+        }
     }
 
     #endregion
@@ -562,40 +589,59 @@ public class LevelManager : MonoBehaviour
         // PUNTO DE CARTAS.
         if (nCards1 > nCards2) // Jugador 1 tiene mas cartas.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 1 tiene cartas.");
             _player1Points += 1;
         }
         else if (nCards2 > nCards1) // Jugador 2 tiene mas cartas.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 2 tiene cartas.");
             _player2Points += 1;
         }
-        // else: empate a cartas, nadie suma.
+        else // Empate a cartas, nadie suma.
+        {
+            Debug.Log("[LEVEL MANAGER] Empate a cartas.");
+        }
 
         // PUNTO DE SIETES.
         if (nSevens1 > nSevens2) // Jugador 1 tiene mas sietes.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 1 tiene sietes.");
             _player1Points += 1;
         }
         else if (nSevens2 > nSevens1) // Jugador 2 tiene mas sietes.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 2 tiene sietes.");
             _player2Points += 1;
         }
-        // else: empate a sietes, nadie suma.
+        else // Empate a sietes, nadie suma.
+        {
+            Debug.Log("[LEVEL MANAGER] Empate a sietes.");
+        }
 
         // PUNTO DE OROS.
         if (nGolds1 > nGolds2) // Jugador 1 tiene mas oros.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 1 tiene oros.");
+
             _player1Points += 1;
         }
         else if (nGolds2 > nGolds1) // Jugador 2 tiene mas oros.
         {
+            Debug.Log("[LEVEL MANAGER] Jugador 2 tiene oros.");
             _player2Points += 1;
         }
-        // else: empate a oros, nadie suma.
+        else // Empate a oros, nadie suma.
+        {
+            Debug.Log("[LEVEL MANAGER] Empate a oros.");
+        }
 
         //------Sumamos escobas:
         // PUNTOS DE ESCOBAS.
-        _player1Points += _player1.GetPlayerHand().GetBrooms();
-        _player2Points += _player2.GetPlayerHand().GetBrooms();
+        int brooms1 = _player1.GetPlayerHand().GetBrooms();
+        int brooms2 = _player2.GetPlayerHand().GetBrooms();
+        _player1Points += brooms1;
+        _player2Points += brooms2;
+        Debug.Log("[LEVEL MANAGER] Escobas: " + brooms1 + "-" + brooms2);
 
         Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------" + _player2Points + "------");
     }
