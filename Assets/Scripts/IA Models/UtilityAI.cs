@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UtilityAI : MonoBehaviour
+public class UtilityAI : IAModel
 {
     // Start is called before the first frame update
     void Start()

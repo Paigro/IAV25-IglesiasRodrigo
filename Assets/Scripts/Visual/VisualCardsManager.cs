@@ -63,4 +63,10 @@ public class VisualCardsManager : MonoBehaviour
     {
 
     }
+
+
+    public void MoveCardTo(string cardName, Transform whereToGo)
+    {
+       
+    }
 }
