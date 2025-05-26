@@ -490,13 +490,8 @@ public class LevelManager : MonoBehaviour
     private void ExecutePlayerMove(List<Card> move)
     {
         // Tintamos las cartas.
-        _VisualCardsManager.TintCards(move);
-        float showCards = 2.0f;
-        while (showCards >= 0)
-        {
-            showCards -= Time.deltaTime;
-        }
         _VisualCardsManager.DesTintCards();
+        _VisualCardsManager.TintCards(move);
 
         // Cogemos la mano del jugador que acaba de jugar.
         Hand playerHand = _startingPlayer ? _player1.GetPlayerHand() : _player2.GetPlayerHand();

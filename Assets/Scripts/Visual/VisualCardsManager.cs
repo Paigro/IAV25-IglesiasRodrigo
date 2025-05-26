@@ -77,11 +77,11 @@ public class VisualCardsManager : MonoBehaviour
     }
     public void TintCards(List<Card> cards)
     {
-        for(int i = 0; i < cards.Count; i++)
+        for (int i = 0; i < cards.Count; i++)
         {
             string cardName = cards[i].GetCardName();
             GameObject cardObj = _cardsGaOb.Find(c => c.name == cardName);
-            cardObj.GetComponent<SpriteRenderer>().color = Color.red;
+            cardObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.4f, 0.37f);
         }
     }
     public void DesTintCards()

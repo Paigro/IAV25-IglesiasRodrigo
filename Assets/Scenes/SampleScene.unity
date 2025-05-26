@@ -6663,9 +6663,9 @@ MonoBehaviour:
   _deckPF: {fileID: 8890870841586015278, guid: b2c48a6e52b316d4db41a55b3b879d89, type: 3}
   _stack1: {fileID: 1239457011}
   _stack2: {fileID: 1916907133}
-  _roundResultTimer: 1
-  _levelResultTimer: 2
-  _drawCardsTimer: 1
+  _roundResultTimer: 5
+  _levelResultTimer: 5
+  _drawCardsTimer: 3
   _postActionTimer: 2
 --- !u!4 &1184222400
 Transform:
