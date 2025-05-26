@@ -72,28 +72,24 @@ public class Player : MonoBehaviour
 
     public void PlayTurn(List<Card> table)
     {
-        // TODO: separar si es humano o no pero eso ya para la E.
-
         List<Card> move;
 
         move = _model.FindMove(new List<Card>(_hand.GetCardsInHand()), table);
 
         if (move.Count > 1)
         {
-            // seleccionar cartas durante un tiempo y luego mandar a la pila.
-            Debug.Log("[PLAYER] Jugada que coje cartas.");
+            //Debug.Log("[PLAYER] Jugada que coje cartas.");
             for (int i = 0; i < move.Count; i++)
             {
-                Debug.Log(move[i].GetCardName());
+                //Debug.Log(move[i].GetCardName());
             }
         }
         else if (move.Count == 1)
         {
-            // mover la carta [0] a la mesa.
-            Debug.Log("[PLAYER] Jugada que deja carta en mesa.");
+            //Debug.Log("[PLAYER] Jugada que deja carta en mesa.");
             for (int i = 0; i < move.Count; i++)
             {
-                Debug.Log(move[i].GetCardName());
+                //Debug.Log(move[i].GetCardName());
             }
         }
         else

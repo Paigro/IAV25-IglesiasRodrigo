@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour
     /// Referencia al VisualCardsManager.
     /// </summary>
     private VisualCardsManager _VisualCardsManager;
+    
     /// <summary>
     /// Referencia al prefab de la mano del jugador 1.
     /// </summary>
@@ -56,8 +57,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject _stack2 = null;
-
-
 
     /// <summary>
     /// Referencia al mazo.
@@ -155,7 +154,7 @@ public class LevelManager : MonoBehaviour
     {
         _usingTimer = true;
         _timer = newTime;
-        Debug.Log("[LEVEL MANAGER] Empieza un timer de " + newTime + " segundos.");
+        //Debug.Log("[LEVEL MANAGER] Empieza un timer de " + newTime + " segundos.");
     }
 
     #endregion
@@ -190,7 +189,7 @@ public class LevelManager : MonoBehaviour
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
         _player1.SetPlayable(false);
         _player1.SetHand(_player1.GetComponent<Hand>());
-        _player1.SetAIModel(new MCTS());
+        _player1.SetAIModel(new UtilityAI());
         _player1.gameObject.name = "Player1";
         _player1.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, -3.8f, 0);
 
@@ -198,7 +197,7 @@ public class LevelManager : MonoBehaviour
         _player2 = Instantiate(_player2PF).GetComponent<Player>();
         _player2.SetPlayable(false);
         _player2.SetHand(_player2.GetComponent<Hand>());
-        _player2.SetAIModel(new MCTS());
+        _player2.SetAIModel(new UtilityAI());
         _player2.gameObject.name = "Player2";
         _player2.gameObject.transform.position = new Vector3(-HAND_CARDS_OFFSET, 3.8f, 0);
 
@@ -283,7 +282,7 @@ public class LevelManager : MonoBehaviour
 
     #endregion
 
-    #region Register methods and important getters:
+    #region Register methods:
 
     public void RegisterVisualCardsManager(VisualCardsManager visualCardsManager)
     {
@@ -365,7 +364,7 @@ public class LevelManager : MonoBehaviour
         // Se reparten 3 cartas a cada jugador dependiendo de quien empiece.
         PlayersDrawCards(starting, dealer);
 
-        // Se reparte la mesa
+        // Se reparte la mesa.
         for (int i = 0; i < 4; i++)
         {
             Card card = _deck.DrawCard();
@@ -379,7 +378,7 @@ public class LevelManager : MonoBehaviour
         //if (initBrooms > 0)
         //{
         //    dealer.AddBroom(initBrooms); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
-
+        // el error de aqui es que esto deberia ser un while porque estoy quitando y recorriendo una lista a la vez.
         //    for (int i = 0; i < 4; i++)
         //    {
         //        Card tableCard = _table.GetCardsInTable()[i];
@@ -417,12 +416,10 @@ public class LevelManager : MonoBehaviour
     {
         // Cogemos al jugador que le toca.
         Player player = _startingPlayer ? _player1 : _player2;
-
-        // Juega.
+        //Se activa que esta el jugador jugando.
         _playerIsPlaying = true;
+        // Juega.
         player.PlayTurn(new List<Card>(_table.GetCardsInTable())); // Para evitr que se pueda modificar la lista original se le pasa otra nueva.
-
-
     }
 
     private void ResetThings()
@@ -460,14 +457,17 @@ public class LevelManager : MonoBehaviour
 
     private void PlayersDrawCards(Hand starting, Hand dealer)
     {
+
         // 3 cartas para cada jugador.
         for (int i = 0; i < 3; i++)
         {
+            Player player = _startingPlayer ? _player1 : _player2;
             Card card = _deck.DrawCard();
-            _VisualCardsManager.MoveCardTo(card.GetCardName(), _player1.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), player.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             starting.AddCardToHand(card);
+            player = _startingPlayer ? _player2 : _player1;
             card = _deck.DrawCard();
-            _VisualCardsManager.MoveCardTo(card.GetCardName(), _player2.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), player.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
             dealer.AddCardToHand(card);
         }
     }
@@ -476,7 +476,6 @@ public class LevelManager : MonoBehaviour
     {
         // Cogemos la mano del jugador que acaba de jugar.
         Hand playerHand = _startingPlayer ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
-
         Card cardUsed = move[0];
         if (move.Count == 1) // Ha dejado carta en la mesa: hay que quitarla de la mano.
         {

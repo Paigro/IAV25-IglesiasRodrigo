@@ -15,7 +15,7 @@ public class Deck : MonoBehaviour
 
     public void CreateDeck()
     {
-        Debug.Log("[MAZO] Creando mazo.");
+        //Debug.Log("[MAZO] Creando mazo.");
         _cardsInDeck.Clear();
         for (int i = 0; i < 4; i++)
         {
@@ -42,7 +42,7 @@ public class Deck : MonoBehaviour
 
     public void Shuffle(int nTimes = 1)
     {
-        Debug.Log("[MAZO] Barajando mazo " + nTimes + " veces.");
+        //Debug.Log("[MAZO] Barajando mazo " + nTimes + " veces.");
         int n = _cardsInDeck.Count;
         for (int i = 0; i < nTimes; i++)
         {
@@ -58,7 +58,7 @@ public class Deck : MonoBehaviour
 
     public void ResetDeck()
     {
-        Debug.Log("[MAZO] Reseteando mazo.");
+        //Debug.Log("[MAZO] Reseteando mazo.");
         CreateDeck();
         Shuffle(10);
     }
