@@ -7,13 +7,30 @@ using UnityEngine;
 /// </summary>
 public class Table : MonoBehaviour
 {
+    #region Porperties:
+
+    /// <summary>
+    /// Lista de cartas de la mesa.
+    /// </summary>
     private List<Card> _cardsInTable;
+
+    #endregion
+
+    #region Awake
 
     private void Awake()
     {
         _cardsInTable = new List<Card>();
     }
 
+    #endregion
+
+    #region Card movements:
+
+    /// <summary>
+    /// Mete una carta a la mesa.
+    /// </summary>
+    /// <param name="card"></param>
     public void AddCardToTable(Card card)
     {
         if (card != null)
@@ -22,22 +39,42 @@ public class Table : MonoBehaviour
             //Debug.Log(" [MESA] Carta metida a mesa: " + card.GetCardName());
         }
     }
+
+    /// <summary>
+    /// Saca una carta de la mesa.
+    /// </summary>
+    /// <param name="card"></param>
     public void RemoveCardToTable(Card card)
     {
         _cardsInTable.Remove(card);
+        //Debug.Log(" [MESA] Carta sacada de la mesa: " + card.GetCardName());
     }
+
+    #endregion
+
+    #region Table methods:
+
+    /// <summary>
+    /// Devuelve las cartas que hay en la mesa.
+    /// </summary>
+    /// <returns>Una copia de la lista de las cartas de la mesa para proteger la propia.</returns>
     public List<Card> GetCardsInTable()
     {
-        return _cardsInTable;
+        return new List<Card>(_cardsInTable);
     }
+
+    /// <summary>
+    /// Limpia la mesa eliminando la lista de cartas.
+    /// </summary>
     public void ClearTable()
     {
         _cardsInTable.Clear();
     }
+
     /// <summary>
     /// Comprueba si hay escobas en la mesa inicial.
     /// </summary>
-    /// <returns>El numero de escobas en la mesa</returns>
+    /// <returns>El numero de escobas en la mesa.</returns>
     public int CheckInitBrooms()
     {
         int sum = GetTableSum();
@@ -65,6 +102,13 @@ public class Table : MonoBehaviour
         return acc;
     }
 
+    #endregion
+
+    #region Write:
+
+    /// <summary>
+    /// Escribe la mesa en el Debug de Unity.
+    /// </summary>
     public void WriteTable()
     {
         Debug.Log("[MESA] Cartas de la mesa: ");
@@ -73,4 +117,6 @@ public class Table : MonoBehaviour
             Debug.Log(_cardsInTable[i].GetCardName());
         }
     }
+
+    #endregion
 }

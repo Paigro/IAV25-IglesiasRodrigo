@@ -2,17 +2,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Deck.
+/// Represents a deck.
 /// </summary>
 public class Deck : MonoBehaviour
 {
+    #region Propierties:
+
+    /// <summary>
+    /// Lista de cartas del mazo.
+    /// </summary>
     private List<Card> _cardsInDeck;
+
+    #endregion
+
+    #region Awake:
 
     void Awake()
     {
         _cardsInDeck = new List<Card>();
     }
 
+    #endregion
+
+    #region Deck creation:
+
+    /// <summary>
+    /// Crea un mazo de la baraja espanyola.
+    /// </summary>
     public void CreateDeck()
     {
         //Debug.Log("[MAZO] Creando mazo.");
@@ -40,6 +56,10 @@ public class Deck : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Barajea las cartas N veces con Fisher-Yates.
+    /// </summary>
+    /// <param name="nTimes"></param>
     public void Shuffle(int nTimes = 1)
     {
         //Debug.Log("[MAZO] Barajando mazo " + nTimes + " veces.");
@@ -56,15 +76,28 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void ResetDeck()
+    /// <summary>
+    /// Resetea el mazo al estado original creando un nuevo mazo y barajandolo 10 veces.
+    /// </summary>
+    /// <param name="shuffleTimes"></param>
+    public void ResetDeck(int shuffleTimes = 10)
     {
         //Debug.Log("[MAZO] Reseteando mazo.");
         CreateDeck();
-        Shuffle(10);
+        Shuffle(shuffleTimes);
     }
 
+    #endregion
+
+    #region Card movements:
+
+    /// <summary>
+    /// Accion de robar una carta del mazo.
+    /// </summary>
+    /// <returns>La ultima carta de la lista del mazo.</returns>
     public Card DrawCard()
     {
+        //Debug.Log("[MAZO] Robar carta del mazo.");
         if (_cardsInDeck.Count == 0)
         {
             Debug.LogWarning("[MAZO] No hay cartas en el mazo.");
@@ -74,11 +107,27 @@ public class Deck : MonoBehaviour
         _cardsInDeck.RemoveAt(_cardsInDeck.Count - 1);
         return drawCard;
     }
+
+    #endregion
+
+    #region Getters:
+
+    /// <summary>
+    /// Devuelve el numero de cartas del mazo.
+    /// </summary>
+    /// <returns>El numero de cartas del mazo.</returns>
     public int GetDeckCount()
     {
         return _cardsInDeck.Count;
     }
 
+    #endregion
+
+    #region Write and read:
+
+    /// <summary>
+    /// Escribe el mazo en el Debug de Unity.
+    /// </summary>
     public void WriteDeck()
     {
         Debug.Log("[MAZO] Escribiendo mazo con " + _cardsInDeck.Count + " cartas.");
@@ -88,6 +137,9 @@ public class Deck : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Lee un mazo prehecho de txt.
+    /// </summary>
     public void ReadDeckFromTxt()
     {
         Debug.Log("[MAZO] Leyendo mazo.");
@@ -130,4 +182,6 @@ public class Deck : MonoBehaviour
             }
         }
     }
+
+    #endregion
 }

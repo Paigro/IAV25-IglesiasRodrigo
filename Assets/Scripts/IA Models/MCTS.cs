@@ -2,8 +2,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+
+/// <summary>
+/// AI model based in Monte Carlo Tree Search.
+/// </summary>
 public class MCTS : IAModel
 {
+    #region Inherit methods:
+
     public override List<Card> FindMove(List<Card> hand, List<Card> table)
     {
         //Debug.Log("[MCTS] Inicio de FindMove");
@@ -16,6 +22,10 @@ public class MCTS : IAModel
 
         return bestState.pickedCards; // Devolvemos las cartas usadas,
     }
+
+    #endregion
+
+    #region MCTS methods:
 
     private MCTSState FindMove(MCTSState initState)
     {
@@ -100,6 +110,10 @@ public class MCTS : IAModel
         return best;
     }
 
+    #endregion
+
+    #region MCTS classes:
+
     //------------Clases necesarias para el MCTS------------//
     private class MCTSState
     {
@@ -108,8 +122,9 @@ public class MCTS : IAModel
         public List<Card> pickedCards = new List<Card>(); // Cartas de la mesa seleccionadas.
         public Card selectedCard; // Carta de la mano seleccionada.
 
-        // Constructoras.
+        // Constructora por defecto.
         public MCTSState() { }
+        // Constructora con mano y mesa.
         public MCTSState(List<Card> hand, List<Card> table)
         {
             playerHand = new List<Card>(hand);
@@ -236,11 +251,11 @@ public class MCTS : IAModel
 
     private class MCTSNode
     {
-        public MCTSState currentState;
-        public MCTSNode parentNode;
-        public List<MCTSNode> children = new List<MCTSNode>();
-        public float visits = 0;
-        public float wins = 0;
+        public MCTSState currentState; // Como esta el estado en el nodo actual.
+        public MCTSNode parentNode; // Nodo padre, null si no hay.
+        public List<MCTSNode> children = new List<MCTSNode>(); // Lista de nodos hijos.
+        public float visits = 0; // Numero de visitas de este nodo.
+        public float wins = 0; // Numero de victorias del nodo.
 
         // Constructora.
         public MCTSNode(MCTSState state, MCTSNode parent)
@@ -249,4 +264,6 @@ public class MCTS : IAModel
             parentNode = parent;
         }
     }
+
+    #endregion
 }

@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 
+
+/// <summary>
+/// Base class of an AI model.
+/// </summary>
 public abstract class IAModel
 {
     /// <summary>

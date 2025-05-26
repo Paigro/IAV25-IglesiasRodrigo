@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
-using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 
 
@@ -12,6 +10,9 @@ public class LevelManager : MonoBehaviour
 {
     #region Constants:
 
+    /// <summary>
+    /// Offset que tienen las cartas de las manos.
+    /// </summary>
     private const float HAND_CARDS_OFFSET = 1.5f;
 
     #endregion
@@ -138,14 +139,27 @@ public class LevelManager : MonoBehaviour
 
     #region Timers:
 
+    /// <summary>
+    /// Timer que se activa mientras se ve el menu de resultado de ronda.
+    /// </summary>
     [SerializeField]
     private float _roundResultTimer;
+    /// <summary>
+    /// Timer que se activa mientras se ve el menu de resultado de partida.
+    /// </summary>
     [SerializeField]
     private float _levelResultTimer;
+    /// <summary>
+    /// Timer que se activa tras robar cartas.
+    /// </summary>
     [SerializeField]
     private float _drawCardsTimer;
+    /// <summary>
+    /// Timer que se activa tras que un jugador realiza su accion.
+    /// </summary>
     [SerializeField]
     private float _postActionTimer;
+    
     /// <summary>
     /// Contador de tiempo.
     /// </summary>
@@ -154,14 +168,15 @@ public class LevelManager : MonoBehaviour
     /// Para saber si hay un timer activo o no.
     /// </summary>
     private bool _usingTimer = false;
+    
     /// <summary>
     /// Establece un timer para el Update con un tiempo determinado.
     /// </summary>
     /// <param name="newTime"></param>
     public void SetTimer(float newTime = 2f)
     {
-        _usingTimer = true;
         _timer = newTime;
+        _usingTimer = true;
         //Debug.Log("[LEVEL MANAGER] Empieza un timer de " + newTime + " segundos.");
     }
 
@@ -171,6 +186,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        // Singleton.
         if (Instance == null)
         {
             Instance = this;
@@ -180,6 +196,7 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        // Estado inicial.
         _currentState = LevelStates.NONE;
     }
     void Start()
@@ -191,7 +208,6 @@ public class LevelManager : MonoBehaviour
         _deck = Instantiate(_deckPF).GetComponent<Deck>();
         _deck.gameObject.name = "Deck";
         _deck.gameObject.transform.position = new Vector3(-8.0f, 0, 0);
-        //_deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
 
         // Creacion jugador 1.
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
@@ -212,7 +228,8 @@ public class LevelManager : MonoBehaviour
         // Creacion de la mesa.
         _table = Instantiate(_tablePF).GetComponent<Table>();
         _table.gameObject.name = "Table";
-        _table.gameObject.transform.position = new Vector3(0, 0, 0);
+        _table.gameObject.transform.position = new Vector3(-4f, 0, 0);
+        _VisualCardsManager.SetTableTransform(_table.transform);
     }
     void Update()
     {
@@ -400,7 +417,7 @@ public class LevelManager : MonoBehaviour
             Card card = _deck.DrawCard();
             _table.AddCardToTable(card);
 
-            _VisualCardsManager.MoveCardTo(card.GetCardName(), _table.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
+            _VisualCardsManager.MoveCardTo(card.GetCardName(), _table.gameObject.transform, new Vector2(), 1);
         }
 
         // Avanzamos de ronda.
@@ -434,7 +451,7 @@ public class LevelManager : MonoBehaviour
         //Se activa que esta el jugador jugando.
         _playerIsPlaying = true;
         // Juega.
-        player.PlayTurn(new List<Card>(_table.GetCardsInTable())); // Para evitr que se pueda modificar la lista original se le pasa otra nueva.
+        player.PlayTurn(_table.GetCardsInTable()); // Para evitr que se pueda modificar la lista original se le pasa otra nueva. Ya no porque GetTAble devuelve una copia.
     }
 
     private void ResetThings()
@@ -501,10 +518,10 @@ public class LevelManager : MonoBehaviour
         {
             _table.AddCardToTable(cardUsed); // Metemos la carta a la mesa.
             playerHand.PlayCard(cardUsed); // Quitamos la carta de la mano.
-            _VisualCardsManager.MoveCardTo(cardUsed.GetCardName(), _table.transform); // Movemos la carta. PAIGRO AQUI: aunque alomejor habria que enseñarla primero.
+            _VisualCardsManager.MoveCardTo(cardUsed.GetCardName(), _table.transform, new Vector2(), 1); // Movemos la carta.
         }
         else if (move.Count > 1) // Coge cartas: hay que quitarla de la mano y mover las de la mesa a la pila.
-        {           
+        {
             Transform objetive = _startingPlayer ? _stack1.transform : _stack2.transform; // Setteamos el objetivo del movimiento.
 
             playerHand.PlayCard(cardUsed); // Quitamos la carta de la mano.
@@ -517,7 +534,7 @@ public class LevelManager : MonoBehaviour
                 Card tableCard = move[i];
                 playerHand.AddCardToStack(tableCard); // Metemos la carta a la pila.
                 _table.RemoveCardToTable(tableCard); // Quitamos la carta de la mesa.
-                _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
+                _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive, new Vector2(), 2); // La movemos.
             }
 
             if (_table.GetTableSum() == 0)
@@ -542,7 +559,7 @@ public class LevelManager : MonoBehaviour
             //Debug.Log("[LEVEL MANAGER] Cartas finales: " + tableCard.GetCardName());
             playerHand.AddCardToStack(tableCard); // Metemos la carta en la pila del jugador.
             _table.RemoveCardToTable(tableCard); // La quitamos de la mesa.
-            _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive); // La movemos.
+            _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), objetive, new Vector2(), 2); // La movemos.
         }
     }
 

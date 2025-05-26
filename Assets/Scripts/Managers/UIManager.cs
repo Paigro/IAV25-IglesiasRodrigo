@@ -1,7 +1,10 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
+
+/// <summary>
+/// Manager to manage the UI of the game.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
     #region References:

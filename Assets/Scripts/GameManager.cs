@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Manager of the whole game.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     #region References:
@@ -38,10 +42,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private GameStates _nextState;
     /// <summary>
-    /// Si se esta jugando un partida o no.
-    /// </summary>
-    private bool _gameInProgress = false;
-    /// <summary>
     /// Juegos maximos que se van a jugar.
     /// </summary>
     private int _nGames;
@@ -74,13 +74,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         switch (_currentState)
@@ -146,7 +144,6 @@ public class GameManager : MonoBehaviour
                         break;
                     case GameStates.LEVEL:
                         _currentState = _nextState;
-                        _gameInProgress = true;
                         _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
                         _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
                         break;
@@ -172,14 +169,12 @@ public class GameManager : MonoBehaviour
         _player1Wins = player1Wins;
         _player2Wins = player2Wins;
 
-        _gameInProgress = false;
         _gamesDone++;
 
         if (_gamesDone < _nGames)
         {
             Debug.Log("[GAME MANAGER] Juego: " + _gamesDone + " de " + _nGames);
 
-            _gameInProgress = true;
 
             _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
             _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
@@ -198,6 +193,10 @@ public class GameManager : MonoBehaviour
 
     #region From UI:
 
+    /// <summary>
+    /// Settea desde la UI el numero de partidas que se van a hacer en el juego desde un boton.
+    /// </summary>
+    /// <param name="nGames"></param>
     public void SetNGames(int nGames)
     {
         Debug.Log("[GAME MANAGER] Se ponen " + nGames + " partidas.");

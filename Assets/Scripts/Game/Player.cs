@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
 
+
+/// <summary>
+/// Class that contains the player with its hand and its AI model.
+/// </summary>
 public class Player : MonoBehaviour
 {
     #region Parameters:
@@ -75,7 +79,7 @@ public class Player : MonoBehaviour
     {
         List<Card> move;
 
-        move = _model.FindMove(new List<Card>(_hand.GetCardsInHand()), table);
+        move = _model.FindMove(_hand.GetCardsInHand(), table);
 
         if (move.Count > 1)
         {

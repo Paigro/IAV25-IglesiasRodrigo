@@ -1,14 +1,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// IA model based in Utility AI.
+/// </summary>
 public class UtilityAI : IAModel
 {
-    [SerializeField] private float BROOM_COST = 2f; // The cost added when making a Scopa (clean the table).
-    [SerializeField] private float GOLDEN_SEVEN_COST = 0.7f; // The cost added when the golden seven is in the move.
-    [SerializeField] private float SEVEN_COST = 0.4f; // The cost added when sevens are in the move.
-    [SerializeField] private float GOLD_COST = 0.2f; // The cost added when golds are in the move.
-    [SerializeField] private float CARD_COST = 0.1f; // The cost added for every card in the move.
-    [SerializeField] private float CARD_LEAVE_COST = 0.2f; // The cost for leaving a card in the table.
+    #region Constants:
+
+    /// <summary>
+    /// The cost added when making a Scopa (clean the table).
+    /// </summary>
+    [SerializeField]
+    private float BROOM_COST = 2f;
+    /// <summary>
+    /// The cost added when the golden seven is in the move.
+    /// </summary>
+    [SerializeField]
+    private float GOLDEN_SEVEN_COST = 0.7f;
+    /// <summary>
+    /// The cost added when sevens are in the move.
+    /// </summary>
+    [SerializeField]
+    private float SEVEN_COST = 0.4f;
+    /// <summary>
+    /// v
+    /// </summary>
+    [SerializeField]
+    private float GOLD_COST = 0.2f;
+    /// <summary>
+    /// The cost added for every card in the move.
+    /// </summary>
+    [SerializeField]
+    private float CARD_COST = 0.1f;
+    /// <summary>
+    /// The cost for leaving a card in the table.
+    /// </summary>
+    [SerializeField]
+    private float CARD_LEAVE_COST = 0.2f;
+
+    #endregion
+
+    #region Inherit methods:
 
     public override List<Card> FindMove(List<Card> hand, List<Card> table)
     {
@@ -34,7 +68,7 @@ public class UtilityAI : IAModel
             {
                 for (int j = 0; j < allCombinatios.Count; j++)
                 {
-                    float score = EvaluatePickedCards(hand[i], allCombinatios[j], table); // Pedimos el escore de esa combinacion.
+                    float score = EvaluatePickedCards(hand[i], allCombinatios[j], table); // Pedimos el score de esa combinacion.
                     if (score > bestScore)
                     {
                         bestScore = score;
@@ -47,8 +81,13 @@ public class UtilityAI : IAModel
 
         return bestMove;
     }
+
+    #endregion
+
+    #region Utility AI methods:
+
     /// <summary>
-    /// Evalua la carta dada con lsa cartas de la mesa.
+    /// Evalua dejar la carta dada con las cartas de la mesa.
     /// </summary>
     /// <param name="card"></param>
     /// <param name="table"></param>
@@ -137,7 +176,7 @@ public class UtilityAI : IAModel
     /// </summary>
     /// <param name="table"></param>
     /// <param name="target"></param>
-    /// <returns>LAs combinaciones de cartas en un lista de listas.</returns>
+    /// <returns>Las combinaciones de cartas en un lista de listas.</returns>
     private List<List<Card>> GetAllCombinations(List<Card> table, int target)
     {
         List<List<Card>> result = new();
@@ -161,4 +200,6 @@ public class UtilityAI : IAModel
 
         return result;
     }
+
+    #endregion
 }
