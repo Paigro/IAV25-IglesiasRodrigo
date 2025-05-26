@@ -126,7 +126,6 @@ public class GameManager : MonoBehaviour
     private void ChangeState(GameStates state)
     {
         _nextState = state;
-        //ui hace cosas.
         UpdateState();
     }
 
@@ -139,17 +138,26 @@ public class GameManager : MonoBehaviour
                 _UIManager.ChangeMenu(GameStates.MENU, LevelManager.LevelStates.NONE);
                 break;
             case GameStates.MENU:
-                _currentState = _nextState;
-                _gameInProgress = true;
-                _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
-                _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
+                switch (_nextState)
+                {
+                    case GameStates.START:
+                        _currentState = _nextState;
+                        _UIManager.ChangeMenu(GameStates.START, LevelManager.LevelStates.NONE);
+                        break;
+                    case GameStates.LEVEL:
+                        _currentState = _nextState;
+                        _gameInProgress = true;
+                        _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
+                        _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
+                        break;
+                }
                 break;
             case GameStates.LEVEL:
-                // cambiar las cosas necesarias.
+                _currentState = _nextState;
                 break;
             case GameStates.END:
                 _currentState = _nextState;
-                _UIManager.ChangeMenu(GameStates.END, LevelManager.LevelStates.NONE);
+                _UIManager.ChangeMenu(GameStates.START, LevelManager.LevelStates.NONE);
                 break;
         }
         Debug.Log("[GAME MANAGER] Cambio de GameState a " + _nextState);
@@ -178,8 +186,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            _UIManager.SetGameResultTexts(_player1Wins, _player2Wins);
             Debug.Log("[GAME MANAGER] Adios juego.");
+            _UIManager.SetGameResultTexts(_player1Wins, _player2Wins);
+            _UIManager.ChangeMenu(GameStates.END, LevelManager.LevelStates.NONE);
             _LevelManager.RequestStateChange(LevelManager.LevelStates.NONE);
             ChangeState(GameStates.END);
         }

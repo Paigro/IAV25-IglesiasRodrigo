@@ -75,8 +75,24 @@ public class VisualCardsManager : MonoBehaviour
         // Mover suavemente a targetPos en 0.5 segundos
         card.transform.DOMove(targetPos, _cardsMovementSpeed).SetEase(Ease.OutQuad);
     }
+    public void TintCards(List<Card> cards)
+    {
+        for(int i = 0; i < cards.Count; i++)
+        {
+            string cardName = cards[i].GetCardName();
+            GameObject cardObj = _cardsGaOb.Find(c => c.name == cardName);
+            cardObj.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+    }
+    public void DesTintCards()
+    {
+        for (int i = 0; i < _cardsGaOb.Count; i++)
+        {
+            _cardsGaOb[i].GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
     /// <summary>
-    /// Vuelve a poner todas las cartas visuales en el mazo.
+    /// Vuelve a poner todas las cartas visuales en el mazo y sin color.
     /// </summary>
     /// <param name="where"></param>
     public void ResetVisualCards(Transform where)
@@ -84,6 +100,7 @@ public class VisualCardsManager : MonoBehaviour
         //Debug.Log("[VISUAL CARD MANAGER] Reset.");
         for (int i = 0; i < _cardsGaOb.Count; i++)
         {
+            _cardsGaOb[i].GetComponent<SpriteRenderer>().color = Color.white;
             _cardsGaOb[i].transform.DOMove(where.position, _cardsMovementSpeed).SetEase(Ease.OutQuad);
         }
     }

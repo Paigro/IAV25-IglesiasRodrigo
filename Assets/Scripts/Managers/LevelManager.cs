@@ -142,6 +142,10 @@ public class LevelManager : MonoBehaviour
     private float _roundResultTimer;
     [SerializeField]
     private float _levelResultTimer;
+    [SerializeField]
+    private float _drawCardsTimer;
+    [SerializeField]
+    private float _postActionTimer;
     /// <summary>
     /// Contador de tiempo.
     /// </summary>
@@ -219,7 +223,7 @@ public class LevelManager : MonoBehaviour
             {
                 case LevelStates.DRAW_CARDS:
                     UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.DRAW_CARDS);
-                    //SetTimer(1);
+                    SetTimer(_drawCardsTimer);
                     if (_nRounds == 0) // Si es la ronda inicial entonces 
                     {
                         SetUpGame();
@@ -244,7 +248,7 @@ public class LevelManager : MonoBehaviour
                             _VisualCardsManager.ResetVisualCards(_deck.transform);
                             UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.ROUND_RESULTS);
                             ChangeState(LevelStates.ROUND_RESULTS);
-                            SetTimer(1);
+                            SetTimer(_roundResultTimer);
                         }
                         // Cuando los jugadores se quedan sin cartas en la mano.
                         else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
@@ -262,7 +266,6 @@ public class LevelManager : MonoBehaviour
                 case LevelStates.ROUND_RESULTS:
                     if (_player1Points >= 21 || _player2Points >= 21)
                     {
-                        //SetTimer(_levelResultTimer);
                         if (_player1Points >= 21)
                             _player1Wins += 1;
                         else
@@ -270,10 +273,12 @@ public class LevelManager : MonoBehaviour
                         Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
                         UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.LEVEL_RESULTS);
                         ChangeState(LevelStates.LEVEL_RESULTS);
+                        SetTimer(_levelResultTimer);
                     }
                     else
                     {
                         ChangeState(LevelStates.DRAW_CARDS);
+                        SetTimer(_drawCardsTimer);
                     }
                     break;
                 case LevelStates.LEVEL_RESULTS:
@@ -398,21 +403,6 @@ public class LevelManager : MonoBehaviour
             _VisualCardsManager.MoveCardTo(card.GetCardName(), _table.gameObject.transform, new Vector2(i * HAND_CARDS_OFFSET, 0.0f));
         }
 
-        //// Comprobar escobas en mesa inicial.
-        //int initBrooms = _table.CheckInitBrooms();
-        //if (initBrooms > 0)
-        //{
-        //    dealer.AddBroom(initBrooms); // Si empieza el jugador 1 entonces reparte el 2 y se la lleva el 2.
-        // el error de aqui es que esto deberia ser un while porque estoy quitando y recorriendo una lista a la vez.
-        //    for (int i = 0; i < 4; i++)
-        //    {
-        //        Card tableCard = _table.GetCardsInTable()[i];
-        //        dealer.AddCardToStack(tableCard); // Metemos la carta a la pila.
-        //        _table.RemoveCardToTable(tableCard); // Quitamos la carta de la mesa.
-        //        _VisualCardsManager.MoveCardTo(tableCard.GetCardName(), dealer.transform);
-        //    }
-        //}
-
         // Avanzamos de ronda.
         _nRounds++;
         // Siguiente estado.
@@ -499,6 +489,15 @@ public class LevelManager : MonoBehaviour
 
     private void ExecutePlayerMove(List<Card> move)
     {
+        // Tintamos las cartas.
+        _VisualCardsManager.TintCards(move);
+        float showCards = 2.0f;
+        while (showCards >= 0)
+        {
+            showCards -= Time.deltaTime;
+        }
+        _VisualCardsManager.DesTintCards();
+
         // Cogemos la mano del jugador que acaba de jugar.
         Hand playerHand = _startingPlayer ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
         Card cardUsed = move[0];
@@ -533,7 +532,7 @@ public class LevelManager : MonoBehaviour
 
             _lastPlayerThatPutInTable = _startingPlayer ? 1 : 0; // Nos guardamos el ultimo jugador que ha puesto en la mesa.
         }
-        //SetTimer(1);
+        SetTimer(_postActionTimer);
     }
 
     private void GiveSomeoneLastCards()

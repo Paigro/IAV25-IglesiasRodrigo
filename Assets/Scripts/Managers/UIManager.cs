@@ -218,8 +218,8 @@ public class UIManager : MonoBehaviour
     }
     public void SetGameResultTexts(int points1, int points2)
     {
-        _player1LevelResult.text = "Player 1 won:     " + points1 + "   times";
-        _player2LevelResult.text = "Player 2 won:     " + points2 + "   times";
+        _player1GameResult.text = "Player 1 won:     " + points1 + "   times";
+        _player2GameResult.text = "Player 2 won:     " + points2 + "   times";
     }
 
     #endregion
@@ -228,6 +228,7 @@ public class UIManager : MonoBehaviour
 
     public void ButtonChangeState(int newState)
     {
+        Debug.Log("[UI MANAGER] Boton para cambiar a estado: " + (GameManager.GameStates)newState);
         GameManager.Instance.RequestStateChange((GameManager.GameStates)newState);
     }
 
