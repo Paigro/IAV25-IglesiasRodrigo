@@ -205,36 +205,75 @@ public class UIManager : MonoBehaviour
         _turn.text = "Turn: " + player.ToString();
     }
 
+    /// <summary>
+    /// Actualiza el texto de resultado de ronda con:
+    /// Numero de puntos de cada jugador.
+    /// Numero de cartas de cada jugador.
+    /// Numero de sietes de cada jugador.
+    /// Numero de oros de cada jugador.
+    /// Numero de sietes de oros de cada jugador (aunque solo lo pueda tener 1.
+    /// Numero de escobas de cada jugador.
+    /// </summary>
     public void SetRoundResultTexts(int points1, int points2, int cards1, int cards2, int sevens1, int sevens2, int golds1, int golds2, int goldenSeven1, int goldenSeven2, int brooms1, int brooms2)
     {
         _player1RoundResult.text = "Player 1:     " + points1 + "         (" + cards1.ToString() + " )" + "         (" + sevens1.ToString() + " )" + "         (" + golds1.ToString() + " )" + "         (" + goldenSeven1.ToString() + " )" + "         (" + brooms1.ToString() + " )";
         _player2RoundResult.text = "Player 2:     " + points2 + "         (" + cards2.ToString() + " )" + "         (" + sevens2.ToString() + " )" + "         (" + golds2.ToString() + " )" + "         (" + goldenSeven2.ToString() + " )" + "         (" + brooms2.ToString() + " )";
     }
 
+    /// <summary>
+    /// Actualiza el texto de resultado de partida con:
+    /// Numero de puntos finales de cada jugador.
+    /// Y quien ha perdido y quien ganado.
+    /// </summary>
     public void SetLevelResultTexts(int points1, int points2)
     {
-        string winner1 = points1 > points2 ? "(Winner)" : "(Loser)";
-        string winner2 = points1 < points2 ? "(Winner)" : "(Loser)";
+        if (points1 == points2) // Empate.
+        {
+            _player1LevelResult.text = "Player 1:     " + points1 + "   (Tie)";
+            _player2LevelResult.text = "Player 2:     " + points2 + "   (Tie)";
+        }
+        else // No empate.
+        {
+            string winner1 = points1 > points2 ? "(Winner)" : "(Loser)";
+            string winner2 = points1 < points2 ? "(Winner)" : "(Loser)";
 
-        _player1LevelResult.text = "Player 1:     " + points1 + "   " + winner1;
-        _player2LevelResult.text = "Player 2:     " + points2 + "   " + winner2;
+            _player1LevelResult.text = "Player 1:     " + points1 + "   " + winner1;
+            _player2LevelResult.text = "Player 2:     " + points2 + "   " + winner2;
+        }
     }
-    public void SetGameResultTexts(int points1, int points2)
+    public void SetGameResultTexts(int points1, int points2, int rounds)
     {
-        _player1GameResult.text = "Player 1 won:     " + points1 + "   times";
-        _player2GameResult.text = "Player 2 won:     " + points2 + "   times";
+        _player1GameResult.text = "Player 1 won:     " + points1 + "/" + rounds+" times";
+        _player2GameResult.text = "Player 2 won:     " + points2 + "/" + rounds+" times";
     }
 
     #endregion
 
     #region Buttons:
 
+    /// <summary>
+    /// Boton para cambiar de estado del GameManager pues no hay botones en otros estados.
+    /// </summary>
+    /// <param name="newState"></param>
     public void ButtonChangeState(int newState)
     {
         Debug.Log("[UI MANAGER] Boton para cambiar a estado: " + (GameManager.GameStates)newState);
         GameManager.Instance.RequestStateChange((GameManager.GameStates)newState);
     }
 
+    /// <summary>
+    /// Boton para cambiar la velocidad de las transiciones y el tiempo que pasa entre acciones, reaprtir cartas yla muestra de resultados.
+    /// </summary>
+    /// <param name="speed"></param>
+    public void ButtonSetSpeed(int speed)
+    {
+        Debug.Log("[UI MANAGER] Boton para cambiar la velocidad a: " + speed);
+        LevelManager.Instance.SetSpeed(speed);
+    }
+
+    /// <summary>
+    /// Boton para salir de la aplicacion.
+    /// </summary>
     public void ButtonExit()
     {
         Application.Quit();

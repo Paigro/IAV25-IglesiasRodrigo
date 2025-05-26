@@ -88,6 +88,7 @@ public class MCTS : IAModel
         float score = simulatedNode.currentState.GetScore();
         //Debug.Log("[MCTS] Simulacion devuelve score: " + score);
         return score;
+
     }
 
     // Fase del MCTS de propagar hacia atras el nodo.
@@ -175,38 +176,109 @@ public class MCTS : IAModel
         // Asignamos puntos dependiendo de las cartas que haya cogido.
         public float GetScore()
         {
-            float score = pickedCards.Count;
+            float score = 0f;
+
+            int nCards = pickedCards.Count;
+            int nGolds = 0;
+            int nSevens = 0;
+            bool goldeSeven = false;
+
             for (int i = 0; i < pickedCards.Count; i++)
             {
-                // Oros.
-                if (pickedCards[i].GetCardSuit() == 'O')
+                Card card = pickedCards[i];
+
+                score += 2; // Cada carta 2 puntos.
+
+                // Calcular la cantidad de oros.
+                if (card.GetCardSuit() == 'O')
                 {
-                    score += 20;
+                    nGolds++;
+                    score += 6;
                 }
-                // Sietes.
-                if (pickedCards[i].GetCardNumber() == 7)
+
+                // Numero de sietes.
+                if (card.GetCardNumber() == 7)
                 {
-                    score += 50;
+                    nSevens++;
+                    score += 10;
+
                     // Siete de oros.
-                    if (pickedCards[i].GetCardSuit() == 'O')
+                    if (card.GetCardSuit() == 'O')
                     {
-                        score += 100;
+                        goldeSeven = true;
+                        score += 50;
                     }
                 }
             }
-            // Escoba.
+
+            //------Bonuses.
+            // Bonus por 8 de oros.
+            if (goldeSeven)
+            {
+                score += 20;
+            }
+            // Llevarse escoba.
             if (tableCards.Count == 0 && pickedCards.Count > 0)
             {
                 score += 200;
             }
-
-            // Dejar carta en mesa es malo, pero tiene que modificar al score sino peta.
-            if (pickedCards.Count == 0)
+            // Bonus por recoger mas cartas.
+            if (nCards >= 4)
             {
-                score += 1f;
+                score += 30;
+            }
+            // Bonus por numero de oros.
+            if (nGolds >= 2)
+            {
+                score += 10;
+            }
+            if (nSevens >= 2)
+            {
+                score += 30;
             }
 
-            //Debug.Log("[MCTS] Score calculado: " + score + " para pickedCards: " + string.Join(", ", pickedCards.Select(c => c.GetCardName())));
+            //------Penalizaciones por cartas que dejamos en la mesa:
+            // Si deja cartas en mesa quitamos puntos. Impar para que no pueda llegar a 0.
+            if (pickedCards.Count == 0)
+            {
+                score -= 3;
+            }
+            // Si dejas un suma de 8 en mesa penalizacion.
+            int tableSum = 0;
+            for (int i = 0; i < tableCards.Count; i++)
+            {
+                tableSum += tableCards[i].GetCardNumber();
+            }
+            if (tableSum == 8)
+            {
+                score -= 60;
+            }
+
+            // Penalización por dejar cartas altas en la mesa (número >= 7)
+            for (int i = 0; i < tableCards.Count; i++)
+            {
+                Card card = tableCards[i];
+                if (card.GetCardNumber() >= 5)
+                {
+                    score -= 6;
+                }
+                // Si dejas un oro.
+                if (card.GetCardSuit() == 'O')
+                {
+                    score -= 160;
+                }
+                // Si dejas un 7.
+                if (card.GetCardNumber() == 7)
+                {
+                    score -= 10;
+                }
+                // Si dejas el 7 de oros.
+                if (card.GetCardNumber() == 7 && card.GetCardSuit() == 'O')
+                {
+                    score -= 50;
+                }
+            }
+
             return score;
         }
 

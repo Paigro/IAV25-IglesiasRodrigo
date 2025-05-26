@@ -159,7 +159,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private float _postActionTimer;
-    
+
     /// <summary>
     /// Contador de tiempo.
     /// </summary>
@@ -168,7 +168,7 @@ public class LevelManager : MonoBehaviour
     /// Para saber si hay un timer activo o no.
     /// </summary>
     private bool _usingTimer = false;
-    
+
     /// <summary>
     /// Establece un timer para el Update con un tiempo determinado.
     /// </summary>
@@ -283,10 +283,20 @@ public class LevelManager : MonoBehaviour
                 case LevelStates.ROUND_RESULTS:
                     if (_player1Points >= 21 || _player2Points >= 21)
                     {
-                        if (_player1Points >= 21)
+                       
+                        if (_player1Points >= 21 && _player1Points > _player2Points) // Gana el jugador 1.
+                        {
                             _player1Wins += 1;
-                        else
+                        }
+                        else if (_player2Points >= 21 && _player2Points > _player1Points) // Gana el jugador 2.
+                        {
                             _player2Wins += 1;
+                        }
+                        else // Empate.
+                        {
+                            Debug.Log("[LEVEL MANAGER] Fin de partida con EMPATE");
+                        }
+
                         Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
                         UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.LEVEL_RESULTS);
                         ChangeState(LevelStates.LEVEL_RESULTS);
@@ -727,6 +737,37 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("[LEVEL MANAGER] Cambio de Ia del jugador 2 a " + model.ToString());
         _player2.SetAIModel(model);
+    }
+
+    /// <summary>
+    /// Llamado desde el UIManager desde boton para cambiar los tiempos de los timers. 
+    /// Acepta 1 (normal), 2 (rapida) y 3 (casi instanteneo).
+    /// </summary>
+    /// <param name="speed"></param>
+    public void SetSpeed(int speed)
+    {
+        _VisualCardsManager.SetCardSpeed(speed);
+        switch (speed)
+        {
+            case 1:
+                _drawCardsTimer = 2.0f;
+                _postActionTimer = 2.0f;
+                _roundResultTimer = 5.0f;
+                _levelResultTimer = 8.0f;
+                break;
+            case 2:
+                _drawCardsTimer = 1.0f;
+                _postActionTimer = 1.0f;
+                _roundResultTimer = 5.0f;
+                _levelResultTimer = 5.0f;
+                break;
+            case 3:
+                _drawCardsTimer = 0.0f;
+                _postActionTimer = 0.0f;
+                _roundResultTimer = 1.0f;
+                _levelResultTimer = 3.0f;
+                break;
+        }
     }
 
     #endregion

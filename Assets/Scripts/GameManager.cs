@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Juegos maximos que se van a jugar.
     /// </summary>
-    private int _nGames;
+    private int _nGames = 1;
     /// <summary>
     /// Juegos que se han jugado.
     /// </summary>
@@ -182,7 +182,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("[GAME MANAGER] Adios juego.");
-            _UIManager.SetGameResultTexts(_player1Wins, _player2Wins);
+            _UIManager.SetGameResultTexts(_player1Wins, _player2Wins, _nGames);
             _UIManager.ChangeMenu(GameStates.END, LevelManager.LevelStates.NONE);
             _LevelManager.RequestStateChange(LevelManager.LevelStates.NONE);
             ChangeState(GameStates.END);

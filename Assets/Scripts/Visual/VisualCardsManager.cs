@@ -216,6 +216,31 @@ public class VisualCardsManager : MonoBehaviour
 
     #endregion
 
+    #region From UI:
+
+    /// <summary>
+    /// Pone desde el LevelManager llamado desde el UIManager por un boton la velocidad de las cartas.
+    /// Acepta 1 (normal), 2 (rapida) y 3 (casi instanteneo).
+    /// </summary>
+    /// <param name="speed"></param>
+    public void SetCardSpeed(int speed)
+    {
+        switch (speed)
+        {
+            case 1:
+                _cardsMovementSpeed = 2.0f;
+                break;
+            case 2:
+                _cardsMovementSpeed = 1.0f;
+                break;
+            case 3:
+                _cardsMovementSpeed = 0.0f;
+                break;
+        }
+    }
+
+    #endregion
+
     #region Reset:
 
     /// <summary>
