@@ -19,6 +19,14 @@ public class UIManager : MonoBehaviour
     /// Texto que indica de quien es el turno.
     /// </summary>
     [SerializeField] private TMP_Text _turn;
+    /// <summary>
+    /// Texto que indica los resultados del jugador 1 al final de la ronda.
+    /// </summary>
+    [SerializeField] private TMP_Text _player1RoundResult;
+    /// <summary>
+    /// Texto que indica los resultados del jugador 2 al final de la ronda.
+    /// </summary>
+    [SerializeField] private TMP_Text _player2RoundResult;
 
     /// <summary>
     /// Referencia a la UI del menu inicial. Que tendra boton de inicio y boton de salir.
@@ -176,6 +184,12 @@ public class UIManager : MonoBehaviour
     public void UpdateTurnTest(int player)
     {
         _turn.text = "Turn: " + player.ToString();
+    }
+
+    public void SetRoundResultText(int points1, int points2, int cards1, int cards2, int sevens1, int sevens2, int golds1, int golds2, int goldenSeven1, int goldenSeven2, int brooms1, int brooms2)
+    {
+        _player1RoundResult.text = "Player 1:     " + points1 + "         (" + cards1.ToString() + " )" + "         (" + sevens1.ToString() + " )" + "         (" + golds1.ToString() + " )" + "         (" + goldenSeven1.ToString() + " )" + "         (" + brooms1.ToString() + " )";
+        _player2RoundResult.text = "Player 2:     " + points2 + "         (" + cards2.ToString() + " )" + "         (" + sevens2.ToString() + " )" + "         (" + golds2.ToString() + " )" + "         (" + goldenSeven2.ToString() + " )" + "         (" + brooms2.ToString() + " )";
     }
 
     #endregion

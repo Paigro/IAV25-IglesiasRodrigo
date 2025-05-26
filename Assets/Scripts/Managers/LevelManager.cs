@@ -26,7 +26,7 @@ public class LevelManager : MonoBehaviour
     /// Referencia al VisualCardsManager.
     /// </summary>
     private VisualCardsManager _VisualCardsManager;
-    
+
     /// <summary>
     /// Referencia al prefab de la mano del jugador 1.
     /// </summary>
@@ -187,7 +187,7 @@ public class LevelManager : MonoBehaviour
         _deck = Instantiate(_deckPF).GetComponent<Deck>();
         _deck.gameObject.name = "Deck";
         _deck.gameObject.transform.position = new Vector3(-8.0f, 0, 0);
-        _deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
+        //_deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
 
         // Creacion jugador 1.
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
@@ -227,6 +227,7 @@ public class LevelManager : MonoBehaviour
                     {
                         DrawCardsState();
                     }
+                    UIManager.Instance.UpdateDeckText(_deck.GetDeckCount());
                     break;
                 case LevelStates.PLAYER:
                     if (!_playerIsPlaying)
@@ -239,7 +240,7 @@ public class LevelManager : MonoBehaviour
                             ResetThings();
                             _startingPlayer = !_startingPlayer;
                             _VisualCardsManager.ResetVisualCards(_deck.transform);
-                            UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL,LevelStates.ROUND_RESULTS);
+                            UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.ROUND_RESULTS);
                             ChangeState(LevelStates.ROUND_RESULTS);
                             SetTimer(1);
                         }
@@ -252,6 +253,8 @@ public class LevelManager : MonoBehaviour
                         {
                             PlayerTurnState();
                         }
+                        UIManager.Instance.UpdateDeckText(_deck.GetDeckCount());
+                        UIManager.Instance.UpdateTurnTest(_startingPlayer ? 1 : 2);
                     }
                     break;
                 case LevelStates.ROUND_RESULTS:
@@ -274,9 +277,6 @@ public class LevelManager : MonoBehaviour
                     ChangeState(LevelStates.NONE);
                     break;
             }
-            UIManager.Instance.UpdateDeckText(_deck.GetDeckCount());
-            UIManager.Instance.UpdateTurnTest(_startingPlayer ? 1 : 2);
-
         }
         else
         {
@@ -342,6 +342,7 @@ public class LevelManager : MonoBehaviour
                 break;
             case LevelStates.EXIT:
                 if (_nextState == LevelStates.NONE)
+                    _currentState = _nextState;
                 break;
         }
         Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
@@ -558,6 +559,8 @@ public class LevelManager : MonoBehaviour
         int nSevens2 = 0;
         int nGolds1 = 0;
         int nGolds2 = 0;
+        int goldenSeven1 = 0;
+        int goldenSeven2 = 0;
 
         // del jugador 1.
         for (int i = 0; i < stack1.Count; i++)
@@ -576,6 +579,7 @@ public class LevelManager : MonoBehaviour
                 {
                     // PUNTO DE SIETE DE OROS.
                     Debug.Log("[LEVEL MANAGER] Jugador 1 tiene el siete de oros.");
+                    goldenSeven1++;
                     _player1Points++;
                 }
             }
@@ -597,6 +601,7 @@ public class LevelManager : MonoBehaviour
                 {
                     // PUNTO DE SIETE DE OROS.
                     Debug.Log("[LEVEL MANAGER] Jugador 2 tiene el siete de oros.");
+                    goldenSeven2++;
                     _player2Points++;
                 }
             }
@@ -661,6 +666,8 @@ public class LevelManager : MonoBehaviour
         Debug.Log("[LEVEL MANAGER] Escobas: " + brooms1 + "-" + brooms2);
 
         Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------JUGADOR2: " + _player2Points + "------");
+
+        UIManager.Instance.SetRoundResultText(_player1Points, _player2Points, nCards1, nCards2, nSevens1, nSevens2, nGolds1, nGolds2, goldenSeven1, goldenSeven2, brooms1, brooms2);
     }
 
     /// <summary>
@@ -670,6 +677,30 @@ public class LevelManager : MonoBehaviour
     private Tuple<int, int> GetPlayerPoints()
     {
         return new Tuple<int, int>(_player1Points, _player2Points);
+    }
+
+    #endregion
+
+    #region From UI:
+
+    /// <summary>
+    /// Pone el modelo de IA del jugadr 1 desde los botones de la UI. Lo haria en un solo metodo pero no podria usar los botones...
+    /// </summary>
+    /// <param name="player"></param>
+
+    public void SetIAModel1(int aI)
+    {
+        IAModel model = aI == 0 ? new UtilityAI() : new MCTS();
+
+        Debug.Log("[LEVEL MANAGER] Cambio de Ia del jugador 1 a " + model.ToString());
+        _player1.SetAIModel(model);
+    }
+    public void SetIAModel2(int aI)
+    {
+        IAModel model = aI == 0 ? new UtilityAI() : new MCTS();
+
+        Debug.Log("[LEVEL MANAGER] Cambio de Ia del jugador 2 a " + model.ToString());
+        _player2.SetAIModel(model);
     }
 
     #endregion

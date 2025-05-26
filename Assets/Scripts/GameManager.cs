@@ -41,6 +41,10 @@ public class GameManager : MonoBehaviour
     /// Si se esta jugando un partida o no.
     /// </summary>
     private bool _gameInProgress = false;
+    /// <summary>
+    /// 
+    /// </summary>
+    private int _nGames;
 
     #endregion
 
@@ -70,10 +74,8 @@ public class GameManager : MonoBehaviour
         switch (_currentState)
         {
             case GameStates.START:
-                //ChangeState(GameStates.MENU);
                 break;
             case GameStates.MENU:
-                //ChangeState(GameStates.LEVEL);
                 break;
             case GameStates.LEVEL:
                 if (!_gameInProgress)
@@ -153,6 +155,16 @@ public class GameManager : MonoBehaviour
     public void NotifyGameIsOver()
     {
         _gameInProgress = false;
+    }
+
+    #endregion
+
+    #region From UI:
+
+    public void SetNGames(int nGames)
+    {
+        Debug.Log("[GAME MANAGER] Se ponen " + nGames + " partidas.");
+        _nGames = nGames;
     }
 
     #endregion
