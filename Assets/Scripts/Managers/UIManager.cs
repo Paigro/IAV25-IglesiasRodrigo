@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,21 +12,13 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     /// <summary>
-    /// Referencia al tiempo que queda.
+    /// Texto de las cartas que le quedan al deck.
     /// </summary>
-    [SerializeField] private TMP_Text _remainingTimeTMP;
+    [SerializeField] private TMP_Text _deckRemainingCards;
     /// <summary>
-    /// dad
+    /// Texto que indica de quien es el turno.
     /// </summary>
-    [SerializeField] private TMP_Text _PlayerTurn;
-    /// <summary>
-    /// Referencia a la ronda que es.
-    /// </summary>
-    [SerializeField] private TMP_Text _roundTMP;
-    /// <summary>
-    /// Referencia al resultado.
-    /// </summary>
-    [SerializeField] private TMP_Text _resultTMP;
+    [SerializeField] private TMP_Text _turn;
 
     /// <summary>
     /// Referencia a la UI del menu inicial. Que tendra boton de inicio y boton de salir.
@@ -161,6 +154,28 @@ public class UIManager : MonoBehaviour
                 _endMenu.SetActive(true);
                 break;
         }
+    }
+
+    #endregion
+
+    #region Text methods:
+
+    /// <summary>
+    /// Actualiza el texto que indica el numero de cartas restantes del mazo.
+    /// </summary>
+    /// <param name="remainingCards"></param>
+    public void UpdateDeckText(int remainingCards)
+    {
+        _deckRemainingCards.text = remainingCards.ToString();
+    }
+
+    /// <summary>
+    /// Actualiza el texto que indica de quien es el turno.
+    /// </summary>
+    /// <param name="player"></param>
+    public void UpdateTurnTest(int player)
+    {
+        _turn.text = "Turn: " + player.ToString();
     }
 
     #endregion

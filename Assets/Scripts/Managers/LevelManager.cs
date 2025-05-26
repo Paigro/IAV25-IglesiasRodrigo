@@ -138,6 +138,10 @@ public class LevelManager : MonoBehaviour
 
     #region Timers:
 
+    [SerializeField]
+    private float _roundResultTimer;
+    [SerializeField]
+    private float _levelResultTimer;
     /// <summary>
     /// Contador de tiempo.
     /// </summary>
@@ -183,7 +187,7 @@ public class LevelManager : MonoBehaviour
         _deck = Instantiate(_deckPF).GetComponent<Deck>();
         _deck.gameObject.name = "Deck";
         _deck.gameObject.transform.position = new Vector3(-8.0f, 0, 0);
-        //_deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
+        _deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
 
         // Creacion jugador 1.
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
@@ -235,7 +239,9 @@ public class LevelManager : MonoBehaviour
                             ResetThings();
                             _startingPlayer = !_startingPlayer;
                             _VisualCardsManager.ResetVisualCards(_deck.transform);
+                            UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL,LevelStates.ROUND_RESULTS);
                             ChangeState(LevelStates.ROUND_RESULTS);
+                            SetTimer(1);
                         }
                         // Cuando los jugadores se quedan sin cartas en la mano.
                         else if (_player1.GetPlayerHand().GetHandCount() == 0 && _player2.GetPlayerHand().GetHandCount() == 0)
@@ -249,9 +255,9 @@ public class LevelManager : MonoBehaviour
                     }
                     break;
                 case LevelStates.ROUND_RESULTS:
-                    // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
                     if (_player1Points >= 21 || _player2Points >= 21)
                     {
+                        //SetTimer(_levelResultTimer);
                         if (_player1Points >= 21)
                             _player1Wins += 1;
                         else
@@ -262,12 +268,15 @@ public class LevelManager : MonoBehaviour
                     ChangeState(LevelStates.DRAW_CARDS);
                     break;
                 case LevelStates.LEVEL_RESULTS:
-                    // UI. BOTON PARA PROSEGUIR SI JUGADOR HUMANO, SINO POR TIEMPO.
                     ChangeState(LevelStates.EXIT);
                     break;
                 case LevelStates.EXIT:
+                    ChangeState(LevelStates.NONE);
                     break;
             }
+            UIManager.Instance.UpdateDeckText(_deck.GetDeckCount());
+            UIManager.Instance.UpdateTurnTest(_startingPlayer ? 1 : 2);
+
         }
         else
         {
@@ -275,7 +284,6 @@ public class LevelManager : MonoBehaviour
             if (_timer <= 0)
             {
                 _usingTimer = false;
-                //Debug.Log("[LEVEL MANAGER] Se acabo el timer.");
             }
         }
     }
@@ -331,6 +339,9 @@ public class LevelManager : MonoBehaviour
             case LevelStates.LEVEL_RESULTS:
                 if (_nextState == LevelStates.EXIT)
                     GameManager.Instance.RequestStateChange(GameManager.GameStates.END);
+                break;
+            case LevelStates.EXIT:
+                if (_nextState == LevelStates.NONE)
                 break;
         }
         Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
