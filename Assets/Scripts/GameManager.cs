@@ -70,10 +70,10 @@ public class GameManager : MonoBehaviour
         switch (_currentState)
         {
             case GameStates.START:
-                ChangeState(GameStates.MENU);
+                //ChangeState(GameStates.MENU);
                 break;
             case GameStates.MENU:
-                ChangeState(GameStates.LEVEL);
+                //ChangeState(GameStates.LEVEL);
                 break;
             case GameStates.LEVEL:
                 if (!_gameInProgress)
@@ -127,11 +127,12 @@ public class GameManager : MonoBehaviour
         {
             case GameStates.START:
                 _currentState = _nextState;
-                // cambiar las cosas necesarias.
+                _UIManager.ChangeMenu(GameStates.MENU, LevelManager.LevelStates.NONE);
                 break;
             case GameStates.MENU:
                 _currentState = _nextState;
                 _gameInProgress = true;
+                _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
                 _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
                 // cambiar las cosas necesarias.
                 break;

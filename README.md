@@ -291,14 +291,14 @@ Manager encargado de gestionar la UI. Inicio del juego, seleccion de partida, pa
 | :----- | :----------------- | :--------: | :--------: |
 | Done   | Diseño e idea      | 6-05-2025  | 8-05-2025  |
 | Done   | Documentacion      | 14-05-2025 | 15-05-2025 |
-| Undone | A: entorno         | xx-xx-2025 | 27-05-2025 |
-| Undone | B: MCTS            | xx-xx-2025 | 27-05-2025 |
-| Undone | C: UAI             | xx-xx-2025 | 27-05-2025 |
-| Undone | D: testing         | xx-xx-2025 | 27-05-2025 |
+| Undone | A: entorno         | 22-05-2025 | 27-05-2025 |
+| Undone | B: MCTS            | 25-05-2025 | 27-05-2025 |
+| Undone | C: UAI             | 25-05-2025 | 27-05-2025 |
+| Undone | D: testing         | 26-05-2025 | 27-05-2025 |
 | Undone | E: extra           | xx-xx-2025 | 27-05-2025 |
 | Undone | F: extra muy extra | xx-xx-2025 | 27-05-2025 |
-| Undone | Pruebas y vídeo    | xx-xx-2025 | 27-05-2025 |
-| Undone | Build              | xx-xx-2025 | 27-05-2025 |
+| Undone | Pruebas y vídeo    | 26-05-2025 | 27-05-2025 |
+| Undone | Build              | 26-05-2025 | 27-05-2025 |
 
 Texto.
 

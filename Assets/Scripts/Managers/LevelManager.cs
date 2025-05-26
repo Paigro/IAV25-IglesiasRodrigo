@@ -183,7 +183,7 @@ public class LevelManager : MonoBehaviour
         _deck = Instantiate(_deckPF).GetComponent<Deck>();
         _deck.gameObject.name = "Deck";
         _deck.gameObject.transform.position = new Vector3(-8.0f, 0, 0);
-        _deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
+        //_deck.gameObject.GetComponent<VisualCard>().SetSprite(Resources.Load<Sprite>("Cards/P0"));
 
         // Creacion jugador 1.
         _player1 = Instantiate(_player1PF).GetComponent<Player>();
@@ -333,7 +333,7 @@ public class LevelManager : MonoBehaviour
                     GameManager.Instance.RequestStateChange(GameManager.GameStates.END);
                 break;
         }
-        //Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
+        Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
     }
 
     #endregion
@@ -516,7 +516,6 @@ public class LevelManager : MonoBehaviour
         Hand playerHand = _lastPlayerThatPutInTable == 1 ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
         Transform objetive = _startingPlayer ? _stack2.transform : _stack1.transform; // Setteamos el objetivo del movimiento. Al reves porque despues del execute se intercambia.
         //Debug.Log("[LEVEL MANAGER] Cartas finales: " + _table.GetCardsInTable().Count);
-        int i = 0;
         while (_table.GetCardsInTable().Count > 0)
         {
             Card tableCard = _table.GetCardsInTable()[0];
