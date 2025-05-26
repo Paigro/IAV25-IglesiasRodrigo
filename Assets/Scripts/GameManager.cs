@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    #region Awake, Start and Update:
+    #region Awake and Update:
 
     private void Awake()
     {
@@ -72,11 +72,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-
     }
 
     void Update()
@@ -134,6 +129,11 @@ public class GameManager : MonoBehaviour
             case GameStates.START:
                 _currentState = _nextState;
                 _UIManager.ChangeMenu(GameStates.MENU, LevelManager.LevelStates.NONE);
+                _player1Wins = 0;
+                _player2Wins = 0;
+                _nGames = 1;
+                _gamesDone = 0;
+                LevelManager.Instance.ResetWinners();
                 break;
             case GameStates.MENU:
                 switch (_nextState)
@@ -175,13 +175,13 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("[GAME MANAGER] Juego: " + _gamesDone + " de " + _nGames);
 
-
             _UIManager.ChangeMenu(GameStates.LEVEL, LevelManager.LevelStates.DRAW_CARDS);
             _LevelManager.RequestStateChange(LevelManager.LevelStates.DRAW_CARDS);
         }
         else
         {
             Debug.Log("[GAME MANAGER] Adios juego.");
+
             _UIManager.SetGameResultTexts(_player1Wins, _player2Wins, _nGames);
             _UIManager.ChangeMenu(GameStates.END, LevelManager.LevelStates.NONE);
             _LevelManager.RequestStateChange(LevelManager.LevelStates.NONE);

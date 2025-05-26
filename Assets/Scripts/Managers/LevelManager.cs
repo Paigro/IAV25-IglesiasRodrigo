@@ -483,6 +483,12 @@ public class LevelManager : MonoBehaviour
         _lastPlayerThatPutInTable = -1;
     }
 
+    public void ResetWinners()
+    {
+        _player1Wins = 0;
+        _player2Wins = 0;
+    }
+
     public void NotifiyPlayerEndTurn(List<Card> move)
     {
         // Ejecutamos el movimiento.

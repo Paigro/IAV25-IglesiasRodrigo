@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -18,7 +19,7 @@ public class UtilityAI : IAModel
     /// The cost added when the golden seven is in the move.
     /// </summary>
     [SerializeField]
-    private float GOLDEN_SEVEN_COST = 0.7f;
+    private float GOLDEN_SEVEN_COST = 1.0f;
     /// <summary>
     /// The cost added when sevens are in the move.
     /// </summary>
@@ -49,6 +50,7 @@ public class UtilityAI : IAModel
         float bestScore = float.MinValue;
         List<Card> bestMove = null;
 
+        List<List<Card>> all = new List<List<Card>>();
         for (int i = 0; i < hand.Count; i++)
         {
             int target = 15 - hand[i].GetCardNumber();
@@ -63,6 +65,7 @@ public class UtilityAI : IAModel
                     bestScore = score;
                     bestMove = new List<Card>() { hand[i] };
                 }
+                all.Add(new List<Card>() { hand[i] });
             }
             else // Si hay combinaciones de 15 entonces buscamos la mejor.
             {
@@ -75,11 +78,18 @@ public class UtilityAI : IAModel
                         bestMove = new List<Card>() { hand[i] };
                         bestMove.AddRange(allCombinatios[j]);
                     }
+                    List<Card> move = new List<Card>() { hand[i] };
+                    move.AddRange(allCombinatios[j]);
+                    all.Add(move);
                 }
             }
         }
 
-        return bestMove;
+        float prob = 0.5f;
+        float randomProb = Random.Range(0.0f, 1.0f);
+        List<Card> randomMove = all[Random.Range(0, all.Count)];
+
+        return randomProb < prob ? randomMove : bestMove;
     }
 
     #endregion
