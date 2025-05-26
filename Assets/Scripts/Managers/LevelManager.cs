@@ -218,7 +218,8 @@ public class LevelManager : MonoBehaviour
             switch (_currentState)
             {
                 case LevelStates.DRAW_CARDS:
-                    SetTimer(1);
+                    UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.DRAW_CARDS);
+                    //SetTimer(1);
                     if (_nRounds == 0) // Si es la ronda inicial entonces 
                     {
                         SetUpGame();
@@ -228,6 +229,7 @@ public class LevelManager : MonoBehaviour
                         DrawCardsState();
                     }
                     UIManager.Instance.UpdateDeckText(_deck.GetDeckCount());
+
                     break;
                 case LevelStates.PLAYER:
                     if (!_playerIsPlaying)
@@ -266,15 +268,16 @@ public class LevelManager : MonoBehaviour
                         else
                             _player2Wins += 1;
                         Debug.Log("[LEVEL MANAGER] Fin de partida con JUGADOR1: " + _player1Points + "-JUGADOR2: " + _player2Points);
+                        UIManager.Instance.ChangeMenu(GameManager.GameStates.LEVEL, LevelStates.LEVEL_RESULTS);
                         ChangeState(LevelStates.LEVEL_RESULTS);
                     }
-                    ChangeState(LevelStates.DRAW_CARDS);
+                    else
+                    {
+                        ChangeState(LevelStates.DRAW_CARDS);
+                    }
                     break;
                 case LevelStates.LEVEL_RESULTS:
-                    ChangeState(LevelStates.EXIT);
-                    break;
-                case LevelStates.EXIT:
-                    ChangeState(LevelStates.NONE);
+                    GameManager.Instance.NotifyGameIsOver(_player1Wins, _player2Wins);
                     break;
             }
         }
@@ -337,12 +340,22 @@ public class LevelManager : MonoBehaviour
                     _currentState = _nextState;
                 break;
             case LevelStates.LEVEL_RESULTS:
-                if (_nextState == LevelStates.EXIT)
-                    GameManager.Instance.RequestStateChange(GameManager.GameStates.END);
-                break;
-            case LevelStates.EXIT:
                 if (_nextState == LevelStates.NONE)
+                {
+                    // Reseteamos los puntos de cada jugador.
+                    _player1Points = 0;
+                    _player2Points = 0;
+                    ResetThings();
+                    _VisualCardsManager.ResetVisualCards(_deck.transform);
                     _currentState = _nextState;
+                }
+                else if (_nextState == LevelStates.DRAW_CARDS)
+                {
+                    _player1Points = 0;
+                    _player2Points = 0;
+                    ResetThings();
+                    _currentState = _nextState;
+                }
                 break;
         }
         Debug.Log("[LEVEL MANAGER] Cambio de LevelState a " + _nextState);
@@ -520,7 +533,7 @@ public class LevelManager : MonoBehaviour
 
             _lastPlayerThatPutInTable = _startingPlayer ? 1 : 0; // Nos guardamos el ultimo jugador que ha puesto en la mesa.
         }
-        SetTimer(1);
+        //SetTimer(1);
     }
 
     private void GiveSomeoneLastCards()
@@ -667,7 +680,8 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("[LEVEL MANAGER] ------JUGADOR1: " + _player1Points + "------JUGADOR2: " + _player2Points + "------");
 
-        UIManager.Instance.SetRoundResultText(_player1Points, _player2Points, nCards1, nCards2, nSevens1, nSevens2, nGolds1, nGolds2, goldenSeven1, goldenSeven2, brooms1, brooms2);
+        UIManager.Instance.SetLevelResultTexts(_player1Points, _player2Points);
+        UIManager.Instance.SetRoundResultTexts(_player1Points, _player2Points, nCards1, nCards2, nSevens1, nSevens2, nGolds1, nGolds2, goldenSeven1, goldenSeven2, brooms1, brooms2);
     }
 
     /// <summary>
