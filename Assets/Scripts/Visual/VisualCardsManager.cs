@@ -75,13 +75,27 @@ public class VisualCardsManager : MonoBehaviour
         // Mover suavemente a targetPos en 0.5 segundos
         card.transform.DOMove(targetPos, _cardsMovementSpeed).SetEase(Ease.OutQuad);
     }
-    public void TintCards(List<Card> cards)
+    public void TintCards(List<Card> cards, bool player)
     {
+        Color color=new Color();
+        if (cards.Count == 1) // Dejar carta. Amarillo.
+        {
+            color = new Color(0.98f, 0.98f, 0.58f);
+        }
+        else if (player) // Jugador 1. Rojo.
+        {
+            color = new Color(1.0f, 0.4f, 0.37f);
+        }
+        else if (!player) // Jugador 2.
+        {
+            color = new Color(0.8f, 0.66f, 0.86f);
+        }
+
         for (int i = 0; i < cards.Count; i++)
         {
             string cardName = cards[i].GetCardName();
             GameObject cardObj = _cardsGaOb.Find(c => c.name == cardName);
-            cardObj.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.4f, 0.37f);
+            cardObj.GetComponent<SpriteRenderer>().color = color;
         }
     }
     public void DesTintCards()

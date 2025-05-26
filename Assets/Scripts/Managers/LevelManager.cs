@@ -489,9 +489,10 @@ public class LevelManager : MonoBehaviour
 
     private void ExecutePlayerMove(List<Card> move)
     {
-        // Tintamos las cartas.
+        // Destintamos las cartas.
         _VisualCardsManager.DesTintCards();
-        _VisualCardsManager.TintCards(move);
+        // Tintamos las cartas.
+        _VisualCardsManager.TintCards(move, _startingPlayer);
 
         // Cogemos la mano del jugador que acaba de jugar.
         Hand playerHand = _startingPlayer ? _player1.GetPlayerHand() : _player2.GetPlayerHand();
@@ -503,7 +504,7 @@ public class LevelManager : MonoBehaviour
             _VisualCardsManager.MoveCardTo(cardUsed.GetCardName(), _table.transform); // Movemos la carta. PAIGRO AQUI: aunque alomejor habria que enseñarla primero.
         }
         else if (move.Count > 1) // Coge cartas: hay que quitarla de la mano y mover las de la mesa a la pila.
-        {
+        {           
             Transform objetive = _startingPlayer ? _stack1.transform : _stack2.transform; // Setteamos el objetivo del movimiento.
 
             playerHand.PlayCard(cardUsed); // Quitamos la carta de la mano.
