@@ -14,6 +14,40 @@ Partida de La Escoba entre 2 IAs con modelos diferentes de IA.
 
 Juego de cartas de la baraja española de *La Escoba* en Unity. La idea es hacer 2 IAs que jueguen entre ellas con la posibilidad de poder tomar el control de una de ellas por el jugador si asi lo desea. Se implementaran 2 modelos de IA: *Monte Carlo Tree Search* y *Utility AI*, y antes de empezar la partida se podrá determinar cual de los dos tendrá cada IA. Luego jugarán n partidas 
 
+## Base:
+
+### La Escoba:
+
+La Escoba es un juego de cartas de la baraja española (40 cartas: 1->12 sin 8s y 9s y ñlas figuras valiendo: sota = 8, caballo = 9 y rey = 10) . Se puede jugar entre 2, 3 o hasta 6 jugadores (yo me centrarñe en 1vs1), en el que los jugadores tiene que crear combinaciones de cartas que sumen 15. 
+
+El escenario de juego se compone de mazo, mesa y las diferentes manos y pilas de los jugador.
+
+Al inicio de la partida se reparten 3 cartas a cada jugador y se disponen 4 cartas en la mesa. Luego juegan los jugadores de manera alternativa. Al jugador que le toque mira de sus cartas y busca combinaciones de 15 puntos. Para ello usando solo 1 de sus cartas tiene que encontrar las cartas necesarias para sumar 15 en la mesa. Si lo consigue se las lleva sino tiene que elegir una de sus cartas y dejarla en la mesa. Cuando los jugadores se quedan sin cartas en la mano. Se reparten otras 3 a cada uno pero ninguna a la mesa. Asi sucende la partida hasta que el mazo se queda sin cartas. Las cartas que se quedan en la mesa al acabar tienen que sumar un multiplo de 5 (sino alguien se ha equivocado) y le pertenecen al ultimo jugador que se haya llevado cartas a su pila. Cuando por ejemplo alguien con una carta de su mano y usando todas las de la mesa suma 15, entonces ha hecho una escoba, que es un punto inmediato.
+
+Cuando el mazo se queda sin cartas se contabilizan los puntos de cada jugador. Para ello se mira la pila de cada uno. Hay 5 tipos de puntos: 
+1. Un punto para el jugador con más cartas.
+2. Un punto para el jugador con más oros.
+3. Un punto para el jugador con más sietes.
+4. Un punto para el jugador que haya capturado el siete de oros (el velo).
+5. Un punto por cada escoba realizada.
+
+En el caso de empate en los 3 primeros nadie suma esos puntos. 
+
+El ciclo de juego se repite hasta que un jugador llegue a (21 + puntos conseguidos por el ganador de la primera partida) puntos o en el caso de que ambos lleguen a esa cantidad el que mayor puntos tenga. En el caso de empate se puede desempatar jugando otra ronda, asi hasta que uno de ellos supere al otro.
+
+Si no queda claro o algo no esta del tood bien porque lo he redactado de cabeza, aquí hay más información: [Wikipedia](https://es.wikipedia.org/wiki/Escoba_del_15) o [nhFournier](https://www.nhfournier.es/como-jugar/escoba/)
+
+### Adaptaciones tomadas:
+
+En el juego de La Escoba hay varias reglas (que se pueden usar o no) como por ejemplo:
+
+1. Escobas de mesa: cuando se reparte al principio la mesa, si el valor de las cartas es 15 o 30 y las cartas pueden formar combinaciones legales de 15, el jugador que reparte se lleva 1 o 2 escobas respectivamente. No lo he implementado, a lo mejor a futuro.
+2. Escobas de mano: cuando a un jugador se le reparten las cartas y el valor de ellas suma 15, el jugador puede reclamar escoba de mano que suma 3 puntos pero se queda sin cartas sin jugar y el oponente juega solo hasta que se quede sin cartas. No lo he implementado.
+
+### El proyecto:
+
+La base del proyecto es nula, un proyecto vacio de Unity y mis ganas de hacer uno de mis juegos favoritos de cartas. Recalco aunque este en referencias que las imagenes de las cartas (y el oro recortado para el logo) han sido sacados de Itch.io. Tambien ha sido usado un modulo de Tweens de la Asset Store de Unity.
+
 ## Planteamiento del problema:
 
 **A** - Creacion del entorno de juego. Creación del tablero, el mazo y manos. El GameManager, UIManager y LevelManager. Los assets serán sacados de Internet si no da tiempo a crearlos.
@@ -333,6 +367,10 @@ D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
 ### Assets:
 
 [Cartas](https://fran-ko.itch.io/pixel-deck)
+
+### Asset Store de Unity:
+
+[DOTween](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676)
 
 ### Modelos de IA:
 
