@@ -358,13 +358,7 @@ PX: *A definir durante el desarrollo.*
 
 ## Build:
 
-[Aqui va el enlace a la carpeta de Drive](https://github.com/Paigro)
-
-## Notas:
-
-A - base; creada por nosotros, cogida de las practicas o externo
-B y C - cosas de las prácticas pero no obligatorio.
-D y E - cosas nuevas añadidas. Puede ser solo 1, etc.
+[Build](https://drive.google.com/drive/folders/1BzGojaBmIztY5iub1i61UxNumUTViscE?usp=sharing)
 
 ## Referencias:
 
