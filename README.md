@@ -344,17 +344,21 @@ Texto.
 
 Para este proyecto se han realizado las siguientes pruebas:
 
-P1: Dadas unas partidas, que IA ganas más.
+P0: Probar el juego.
 
-P2: Posibles errores al hacer movimientos del MCTS o viceversa.
+P1: Buenos movimientos del MCTS.
 
-P3: Posibles errores al hacer movimientos del Utility AI o viceversa.
+P2: Malos movimientos del MCTS.
 
-PX: *A definir durante el desarrollo.*
+P3: Buenos movimientos del Utility AI.
+
+P4: Malo movimientos del Utility AI.
+
+P5: Dadas 10 partidas. Qué modelo gana a cuál.
 
 ## Vídeo:
 
-[Aqui va el enlace al video de YouTube](https://github.com/Paigro)
+[Vídeo](https://youtu.be/HOT_LGFEqOo)
 
 ## Build:
 
